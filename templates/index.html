@@ -27,9 +27,9 @@
             --text:         #6a8caa;
             --text-hi:      #b8d0e8;
             --text-lo:      #253a50;
-            --ax:           #e05252;
-            --ay:           #52c052;
-            --az:           #5280e0;
+            --ax:           #ff4444;
+            --ay:           #44dd44;
+            --az:           #4488ff;
             --mono:         'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
             --sans:         -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             --radius:       6px;
@@ -468,21 +468,7 @@
             letter-spacing: 0.05em;
         }
 
-        .copy-btn {
-            margin-left: auto;
-            background: none;
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            color: var(--text-lo);
-            font-family: var(--mono);
-            font-size: 9px;
-            letter-spacing: 0.08em;
-            padding: 2px 7px;
-            transition: border-color var(--tr), color var(--tr);
-        }
-
-        .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
-        .copy-btn.copied { border-color: var(--green); color: var(--green); }
+        /* .copy-btn styles moved to copy-wrap section above */
 
         .reset-btn {
             display: flex;
@@ -623,31 +609,95 @@
             left: 16px;
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
             z-index: 3;
             pointer-events: none;
+            background: rgba(6,10,15,0.55);
+            padding: 8px 10px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(4px);
+        }
+
+        .legend-section-label {
+            font-family: var(--mono);
+            font-size: 8px;
+            color: var(--text-lo);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 1px;
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             font-family: var(--mono);
             font-size: 10px;
             color: var(--text);
             letter-spacing: 0.08em;
         }
 
-        .legend-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 2px;
+        .legend-line {
+            width: 16px;
+            height: 2px;
             flex-shrink: 0;
+            border-radius: 1px;
         }
 
-        .legend-dot.x { background: #ff4444; }
-        .legend-dot.y { background: #44dd44; }
-        .legend-dot.z { background: #4488ff; }
+        .legend-line.solid.x  { background: #ff4444; }
+        .legend-line.solid.y  { background: #44dd44; }
+        .legend-line.solid.z  { background: #4488ff; }
+        .legend-line.dashed.x { background: repeating-linear-gradient(90deg, #ff4444 0 5px, transparent 5px 8px); }
+        .legend-line.dashed.y { background: repeating-linear-gradient(90deg, #44dd44 0 5px, transparent 5px 8px); }
+        .legend-line.dashed.z { background: repeating-linear-gradient(90deg, #4488ff 0 5px, transparent 5px 8px); }
+
+        /* Camera home button */
+        .viewer-home-btn {
+            position: absolute;
+            top: 14px;
+            left: 16px;
+            z-index: 3;
+            background: rgba(9,13,20,0.7);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-lo);
+            font-size: 14px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: border-color var(--tr), color var(--tr), background var(--tr);
+            backdrop-filter: blur(4px);
+        }
+
+        .viewer-home-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+        /* Controls hint */
+        .controls-hint {
+            position: absolute;
+            bottom: 52px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            background: rgba(9,13,20,0.75);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-family: var(--mono);
+            font-size: 9px;
+            color: var(--text-lo);
+            letter-spacing: 0.08em;
+            pointer-events: none;
+            opacity: 1;
+            transition: opacity 0.8s ease;
+            backdrop-filter: blur(4px);
+            white-space: nowrap;
+        }
+
+        .controls-hint.fade { opacity: 0; }
 
         /* Viewer corner label */
         .viewer-label {
@@ -663,8 +713,129 @@
             text-transform: uppercase;
         }
 
+        /* Copy All button */
+        .copy-all-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-lo);
+            font-family: var(--mono);
+            font-size: 10px;
+            letter-spacing: 0.08em;
+            padding: 6px 12px;
+            margin-top: 8px;
+            width: 100%;
+            transition: border-color var(--tr), color var(--tr);
+        }
+        .copy-all-btn:hover { border-color: var(--border-hi); color: var(--text); }
+        .copy-all-btn.copied { border-color: var(--green); color: var(--green); }
+
+        /* Copy dropdown */
+        .copy-wrap {
+            margin-left: auto;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+
+        .copy-btn {
+            background: none;
+            border: 1px solid var(--border);
+            border-right: none;
+            border-radius: 3px 0 0 3px;
+            color: var(--text-lo);
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: 0.08em;
+            padding: 2px 7px;
+            cursor: pointer;
+            transition: border-color var(--tr), color var(--tr);
+        }
+
+        .copy-fmt-btn {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 0 3px 3px 0;
+            color: var(--text-lo);
+            font-family: var(--mono);
+            font-size: 8px;
+            padding: 2px 5px;
+            cursor: pointer;
+            transition: border-color var(--tr), color var(--tr);
+        }
+
+        .copy-fmt-btn:hover, .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+        .copy-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 2px);
+            background: var(--surface-hi);
+            border: 1px solid var(--border-hi);
+            border-radius: var(--radius);
+            z-index: 50;
+            min-width: 130px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+        }
+
+        .copy-menu.open { display: block; }
+
+        .copy-menu-item {
+            display: block;
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-family: var(--mono);
+            font-size: 10px;
+            padding: 6px 10px;
+            text-align: left;
+            cursor: pointer;
+            letter-spacing: 0.05em;
+            transition: background var(--tr);
+        }
+
+        .copy-menu-item:hover { background: var(--surface); color: var(--accent); }
+
+        /* Gimbal lock warning */
+        .gimbal-warning {
+            font-family: var(--mono);
+            font-size: 9px;
+            color: #ffaa00;
+            background: rgba(255,170,0,0.08);
+            border: 1px solid rgba(255,170,0,0.25);
+            border-radius: var(--radius);
+            padding: 4px 8px;
+            margin-top: 6px;
+            letter-spacing: 0.04em;
+            line-height: 1.4;
+        }
+
         /* ── Utility ────────────────────────────────────────────── */
         .hidden { display: none !important; }
+
+        /* Share button */
+        .share-btn {
+            margin-left: auto;
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            color: var(--text-lo);
+            font-family: var(--mono);
+            font-size: 9px;
+            letter-spacing: 0.1em;
+            padding: 3px 9px;
+            cursor: pointer;
+            transition: border-color var(--tr), color var(--tr);
+        }
+        .share-btn:hover { border-color: var(--accent); color: var(--accent); }
+        .share-btn.copied { border-color: var(--green); color: var(--green); }
 
         /* ── Responsive ─────────────────────────────────────────── */
         @media (max-width: 600px) {
@@ -685,6 +856,7 @@
 <header class="app-header">
     <h1><span class="bracket">&lt;</span>rotations<span class="bracket">&gt;</span></h1>
     <span class="subtitle">3D Converter</span>
+    <button class="share-btn" id="share-btn" title="Copy shareable link">share</button>
 </header>
 
 <!-- ── Fixed Footer ────────────────────────────────────────────── -->
@@ -915,9 +1087,18 @@
                         <div class="result-header">
                             <span class="result-title">Euler</span>
                             <span class="result-meta" id="euler-meta"></span>
-                            <button class="copy-btn" data-copy="euler">copy</button>
+                            <div class="copy-wrap">
+                                <button class="copy-btn" data-copy="euler" data-fmt="plain">copy</button>
+                                <button class="copy-fmt-btn" data-menu="euler">▾</button>
+                                <div class="copy-menu" id="copy-menu-euler">
+                                    <button class="copy-menu-item" data-copy="euler" data-fmt="plain">Plain text</button>
+                                    <button class="copy-menu-item" data-copy="euler" data-fmt="python">Python list</button>
+                                    <button class="copy-menu-item" data-copy="euler" data-fmt="json">JSON</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="result-values" id="res-euler"></div>
+                        <div class="gimbal-warning hidden" id="gimbal-warning">⚠ Near gimbal lock — middle rotation ≈ ±90°, one DOF may be lost</div>
                     </div>
 
                     <div class="result-block">
@@ -925,7 +1106,16 @@
                             <span class="result-title">Quaternion</span>
                             <span class="result-meta">w x y z</span>
                             <span class="conv-badge">Hamilton</span>
-                            <button class="copy-btn" data-copy="quaternion">copy</button>
+                            <div class="copy-wrap">
+                                <button class="copy-btn" data-copy="quaternion" data-fmt="plain">copy</button>
+                                <button class="copy-fmt-btn" data-menu="quaternion">▾</button>
+                                <div class="copy-menu" id="copy-menu-quaternion">
+                                    <button class="copy-menu-item" data-copy="quaternion" data-fmt="plain">Plain text</button>
+                                    <button class="copy-menu-item" data-copy="quaternion" data-fmt="python">Python list</button>
+                                    <button class="copy-menu-item" data-copy="quaternion" data-fmt="json">JSON</button>
+                                    <button class="copy-menu-item" data-copy="quaternion" data-fmt="ros-urdf">ROS URDF</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="result-values" id="res-quaternion"></div>
                     </div>
@@ -935,7 +1125,16 @@
                             <span class="result-title">Matrix</span>
                             <span class="result-meta">3 × 3</span>
                             <span class="conv-badge">Active</span>
-                            <button class="copy-btn" data-copy="matrix">copy</button>
+                            <div class="copy-wrap">
+                                <button class="copy-btn" data-copy="matrix" data-fmt="plain">copy</button>
+                                <button class="copy-fmt-btn" data-menu="matrix">▾</button>
+                                <div class="copy-menu" id="copy-menu-matrix">
+                                    <button class="copy-menu-item" data-copy="matrix" data-fmt="plain">Plain text</button>
+                                    <button class="copy-menu-item" data-copy="matrix" data-fmt="python">NumPy array</button>
+                                    <button class="copy-menu-item" data-copy="matrix" data-fmt="json">JSON</button>
+                                    <button class="copy-menu-item" data-copy="matrix" data-fmt="matlab">MATLAB</button>
+                                </div>
+                            </div>
                         </div>
                         <div id="res-matrix"></div>
                     </div>
@@ -944,7 +1143,15 @@
                         <div class="result-header">
                             <span class="result-title">Axis-Angle</span>
                             <span class="result-meta" id="aa-meta"></span>
-                            <button class="copy-btn" data-copy="axis-angle">copy</button>
+                            <div class="copy-wrap">
+                                <button class="copy-btn" data-copy="axis-angle" data-fmt="plain">copy</button>
+                                <button class="copy-fmt-btn" data-menu="axis-angle">▾</button>
+                                <div class="copy-menu" id="copy-menu-axis-angle">
+                                    <button class="copy-menu-item" data-copy="axis-angle" data-fmt="plain">Plain text</button>
+                                    <button class="copy-menu-item" data-copy="axis-angle" data-fmt="python">Python dict</button>
+                                    <button class="copy-menu-item" data-copy="axis-angle" data-fmt="json">JSON</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="result-values" id="res-axis-angle"></div>
                     </div>
@@ -954,11 +1161,21 @@
                             <span class="result-title">Rotation Vector</span>
                             <span class="result-meta">Rodrigues · rad</span>
                             <span class="conv-badge">rotvec</span>
-                            <button class="copy-btn" data-copy="rotvec">copy</button>
+                            <div class="copy-wrap">
+                                <button class="copy-btn" data-copy="rotvec" data-fmt="plain">copy</button>
+                                <button class="copy-fmt-btn" data-menu="rotvec">▾</button>
+                                <div class="copy-menu" id="copy-menu-rotvec">
+                                    <button class="copy-menu-item" data-copy="rotvec" data-fmt="plain">Plain text</button>
+                                    <button class="copy-menu-item" data-copy="rotvec" data-fmt="python">Python list</button>
+                                    <button class="copy-menu-item" data-copy="rotvec" data-fmt="json">JSON</button>
+                                    <button class="copy-menu-item" data-copy="rotvec" data-fmt="ros-tf2">ROS tf2</button>
+                                </div>
+                            </div>
                         </div>
                         <div class="result-values" id="res-rotvec"></div>
                     </div>
 
+                    <button class="copy-all-btn hidden" id="copy-all-btn">copy all formats</button>
                 </div>
             </div>
 
@@ -969,12 +1186,19 @@
     <div class="viewer-wrap">
         <div id="viewer"></div>
         <div class="viewer-overlay"></div>
+        <button class="viewer-home-btn" id="viewer-home-btn" title="Reset camera view">⌂</button>
         <div class="axis-legend">
-            <div class="legend-item"><span class="legend-dot x"></span>X</div>
-            <div class="legend-item"><span class="legend-dot y"></span>Y</div>
-            <div class="legend-item"><span class="legend-dot z"></span>Z</div>
+            <div class="legend-section-label">World frame</div>
+            <div class="legend-item"><span class="legend-line dashed x"></span>X</div>
+            <div class="legend-item"><span class="legend-line dashed y"></span>Y</div>
+            <div class="legend-item"><span class="legend-line dashed z"></span>Z</div>
+            <div class="legend-section-label" style="margin-top:5px">Body frame</div>
+            <div class="legend-item"><span class="legend-line solid x"></span>X</div>
+            <div class="legend-item"><span class="legend-line solid y"></span>Y</div>
+            <div class="legend-item"><span class="legend-line solid z"></span>Z</div>
         </div>
-        <div class="viewer-label">3D Preview</div>
+        <div class="controls-hint" id="controls-hint">drag to orbit · scroll to zoom · right-drag to pan</div>
+        <div class="viewer-label">Z-up · 3D Preview</div>
     </div>
 
 </div><!-- /app -->
@@ -1140,6 +1364,20 @@
 
     init();
 
+    // Camera home button
+    document.getElementById('viewer-home-btn').addEventListener('click', () => {
+        camera.position.set(6, -6, 4);
+        camera.up.set(0, 0, 1);
+        controls.target.set(0, 0, 0);
+        controls.update();
+    });
+
+    // Fade controls hint after 3s
+    setTimeout(() => {
+        const hint = document.getElementById('controls-hint');
+        if (hint) hint.classList.add('fade');
+    }, 3000);
+
     // quat is [w, x, y, z]
     window.updateRotation = function(quat) {
         cube.quaternion.set(quat[1], quat[2], quat[3], quat[0]);
@@ -1156,6 +1394,45 @@
     // ── State ────────────────────────────────────────────────────
     let lastResult = null;
     let debounceTimer = null;
+
+    // ── URL State ─────────────────────────────────────────────────
+    function encodeState() {
+        const fmt = document.getElementById('format').value;
+        const state = {
+            f:  fmt,
+            v:  getValues(),
+            iu: document.getElementById('input-units-toggle').checked ? 1 : 0,
+            ou: document.getElementById('output-units-toggle').checked ? 1 : 0,
+            io: document.getElementById('input-rotation-order').value,
+            oo: document.getElementById('output-euler-order').value,
+            ix: document.getElementById('intrinsic-toggle').checked ? 1 : 0,
+            p:  document.getElementById('precision-select').value,
+        };
+        return btoa(JSON.stringify(state));
+    }
+
+    function decodeState(hash) {
+        try {
+            const state = JSON.parse(atob(hash.replace(/^#/, '')));
+            if (!state.f) return false;
+            document.getElementById('format').value = state.f;
+            onFormatChange();
+            const setV = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+            if      (state.f === 'euler')      { [0,1,2].forEach(i => setV('euler-'+i, state.v[i])); }
+            else if (state.f === 'quaternion') { ['quat-w','quat-x','quat-y','quat-z'].forEach((id,i) => setV(id, state.v[i])); }
+            else if (state.f === 'matrix')     { document.querySelectorAll('#matrix-inputs .num-input').forEach((el,i) => el.value = state.v[i]); }
+            else if (state.f === 'axis-angle') { ['aa-angle','aa-x','aa-y','aa-z'].forEach((id,i) => setV(id, state.v[i])); }
+            else if (state.f === 'rotvec')     { ['rv-x','rv-y','rv-z'].forEach((id,i) => setV(id, state.v[i])); }
+            document.getElementById('input-units-toggle').checked  = !!state.iu;
+            document.getElementById('output-units-toggle').checked = !!state.ou;
+            document.getElementById('input-rotation-order').value  = state.io || 'zyx';
+            document.getElementById('output-euler-order').value    = state.oo || 'zyx';
+            document.getElementById('intrinsic-toggle').checked    = state.ix !== 0;
+            document.getElementById('precision-select').value      = state.p  || '6';
+            syncEulerLabels();
+            return true;
+        } catch (e) { return false; }
+    }
 
     // ── Format switching ─────────────────────────────────────────
     const ALL_INPUT_GROUPS = ['euler-inputs', 'quaternion-inputs', 'matrix-inputs', 'axis-angle-inputs', 'rotvec-inputs'];
@@ -1297,6 +1574,7 @@
             } else {
                 lastResult = data;
                 renderResults(data);
+                history.replaceState(null, '', '#' + encodeState());
                 if (window.updateRotation) {
                     window.updateRotation(data.quaternion);
                 } else {
@@ -1319,6 +1597,7 @@
         emptyEl.className = 'results-empty'; // clear error styling
         emptyEl.classList.add('hidden');
         document.getElementById('results-content').classList.remove('hidden');
+        document.getElementById('copy-all-btn').classList.remove('hidden');
 
         const unitSym  = data.units === 'degrees' ? '°' : ' rad';
         const order    = data.outputRotationOrder.toUpperCase();
@@ -1385,6 +1664,12 @@
                     </div>`
                 ).join('');
         }
+
+        // Gimbal lock proximity check (middle Euler angle ≈ ±90°)
+        const gimbalEl  = document.getElementById('gimbal-warning');
+        const eulerDeg  = data.units === 'degrees' ? data.euler : data.euler.map(v => v * 180 / Math.PI);
+        const nearLock  = Math.abs(Math.abs(eulerDeg[1]) - 90) < 3;
+        gimbalEl.classList.toggle('hidden', !nearLock);
     }
 
     function showError(msg) {
@@ -1398,39 +1683,101 @@
 
     // ── Copy to clipboard ─────────────────────────────────────────
     document.addEventListener('click', async e => {
-        const btn = e.target.closest('.copy-btn');
+        // Close menus on outside click
+        if (!e.target.closest('.copy-wrap')) {
+            document.querySelectorAll('.copy-menu.open').forEach(m => m.classList.remove('open'));
+        }
+        // Toggle format dropdown
+        const menuBtn = e.target.closest('.copy-fmt-btn');
+        if (menuBtn) {
+            e.stopPropagation();
+            const menu = document.getElementById('copy-menu-' + menuBtn.dataset.menu);
+            if (!menu) return;
+            document.querySelectorAll('.copy-menu.open').forEach(m => { if (m !== menu) m.classList.remove('open'); });
+            menu.classList.toggle('open');
+            return;
+        }
+        const btn = e.target.closest('.copy-btn, .copy-menu-item');
         if (!btn || !lastResult) return;
         const type = btn.dataset.copy;
-        const d = lastResult;
-        const f8 = v => v.toFixed(8);
-        let text = '';
+        const fmt  = btn.dataset.fmt || 'plain';
+        const d    = lastResult;
+        const fC   = v => v.toFixed(parseInt(document.getElementById('precision-select').value, 10) || 6);
+        let text   = '';
 
-        switch (type) {
-            case 'euler':
-                text = `Euler (${d.outputRotationOrder.toUpperCase()}, ${d.units}): `
-                     + d.euler.map(f8).join('  ');
-                break;
-            case 'quaternion':
-                text = 'Quaternion (w x y z): ' + d.quaternion.map(f8).join('  ');
-                break;
-            case 'matrix':
-                text = 'Rotation Matrix:\n'
-                     + d.matrix.map(row => row.map(v => f8(v).padStart(14)).join('')).join('\n');
-                break;
-            case 'axis-angle':
-                text = `Axis-Angle (${d.units}): angle=${f8(d.axisAngle.angle)}`
-                     + `  axis=[${d.axisAngle.axis.map(f8).join(', ')}]`;
-                break;
-            case 'rotvec':
-                text = d.rotvec ? `Rotation Vector (rad): [${d.rotvec.map(f8).join(', ')}]` : '';
-                break;
+        const fmtEuler = () => {
+            switch(fmt) {
+                case 'python': return `[${d.euler.map(fC).join(', ')}]  # ${d.outputRotationOrder.toUpperCase()} ${d.units}`;
+                case 'json':   return JSON.stringify({euler: d.euler.map(v => parseFloat(fC(v))), order: d.outputRotationOrder, units: d.units});
+                default:       return `Euler (${d.outputRotationOrder.toUpperCase()}, ${d.units}): ${d.euler.map(fC).join('  ')}`;
+            }
+        };
+        const fmtQuat = () => {
+            switch(fmt) {
+                case 'python':   return `[${d.quaternion.map(fC).join(', ')}]  # w x y z`;
+                case 'json':     return JSON.stringify({w: parseFloat(fC(d.quaternion[0])), x: parseFloat(fC(d.quaternion[1])), y: parseFloat(fC(d.quaternion[2])), z: parseFloat(fC(d.quaternion[3]))});
+                case 'ros-urdf': return `<!-- quaternion -->\n<!-- w=${fC(d.quaternion[0])} x=${fC(d.quaternion[1])} y=${fC(d.quaternion[2])} z=${fC(d.quaternion[3])} -->`;
+                default:         return `Quaternion (w x y z): ${d.quaternion.map(fC).join('  ')}`;
+            }
+        };
+        const fmtMatrix = () => {
+            switch(fmt) {
+                case 'python': return `np.array([\n  [${d.matrix[0].map(fC).join(', ')}],\n  [${d.matrix[1].map(fC).join(', ')}],\n  [${d.matrix[2].map(fC).join(', ')}]\n])`;
+                case 'json':   return JSON.stringify({matrix: d.matrix.map(row => row.map(v => parseFloat(fC(v))))});
+                case 'matlab': return `[${d.matrix[0].map(fC).join(', ')}; ${d.matrix[1].map(fC).join(', ')}; ${d.matrix[2].map(fC).join(', ')}]`;
+                default:       return 'Rotation Matrix:\n' + d.matrix.map(row => row.map(v => fC(v).padStart(14)).join('')).join('\n');
+            }
+        };
+        const fmtAA = () => {
+            switch(fmt) {
+                case 'python': return `{'angle': ${fC(d.axisAngle.angle)}, 'axis': [${d.axisAngle.axis.map(fC).join(', ')}]}  # ${d.units}`;
+                case 'json':   return JSON.stringify({angle: parseFloat(fC(d.axisAngle.angle)), axis: d.axisAngle.axis.map(v => parseFloat(fC(v))), units: d.units});
+                default:       return `Axis-Angle (${d.units}): angle=${fC(d.axisAngle.angle)}  axis=[${d.axisAngle.axis.map(fC).join(', ')}]`;
+            }
+        };
+        const fmtRV = () => {
+            if (!d.rotvec) return '';
+            switch(fmt) {
+                case 'python':  return `[${d.rotvec.map(fC).join(', ')}]  # rotvec rad`;
+                case 'json':    return JSON.stringify({rotvec: d.rotvec.map(v => parseFloat(fC(v)))});
+                case 'ros-tf2': return `# geometry_msgs/Vector3\nx: ${fC(d.rotvec[0])}\ny: ${fC(d.rotvec[1])}\nz: ${fC(d.rotvec[2])}`;
+                default:        return `Rotation Vector (rad): [${d.rotvec.map(fC).join(', ')}]`;
+            }
+        };
+
+        switch(type) {
+            case 'euler':      text = fmtEuler();  break;
+            case 'quaternion': text = fmtQuat();   break;
+            case 'matrix':     text = fmtMatrix(); break;
+            case 'axis-angle': text = fmtAA();     break;
+            case 'rotvec':     text = fmtRV();     break;
         }
-
+        if (!text) return;
         try {
             await navigator.clipboard.writeText(text);
-            btn.textContent = 'copied!';
-            btn.classList.add('copied');
-            setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1500);
+            const main = document.querySelector(`.copy-btn[data-copy="${type}"]`);
+            if (main) { main.textContent = 'copied!'; main.classList.add('copied'); setTimeout(() => { main.textContent = 'copy'; main.classList.remove('copied'); }, 1500); }
+            document.querySelectorAll('.copy-menu.open').forEach(m => m.classList.remove('open'));
+        } catch (_) {}
+    });
+
+    // ── Copy All ──────────────────────────────────────────────────
+    document.getElementById('copy-all-btn').addEventListener('click', async () => {
+        if (!lastResult) return;
+        const d = lastResult;
+        const fC = v => v.toFixed(parseInt(document.getElementById('precision-select').value, 10) || 6);
+        const lines = [
+            `Euler (${d.outputRotationOrder.toUpperCase()}, ${d.units}): ${d.euler.map(fC).join('  ')}`,
+            `Quaternion (w x y z): ${d.quaternion.map(fC).join('  ')}`,
+            `Rotation Matrix:\n` + d.matrix.map(row => row.map(v => fC(v).padStart(14)).join('')).join('\n'),
+            `Axis-Angle (${d.units}): angle=${fC(d.axisAngle.angle)}  axis=[${d.axisAngle.axis.map(fC).join(', ')}]`,
+        ];
+        if (d.rotvec) lines.push(`Rotation Vector (rad): [${d.rotvec.map(fC).join(', ')}]`);
+        try {
+            await navigator.clipboard.writeText(lines.join('\n\n'));
+            const btn = document.getElementById('copy-all-btn');
+            btn.textContent = 'copied all!'; btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'copy all formats'; btn.classList.remove('copied'); }, 1500);
         } catch (_) {}
     });
 
@@ -1455,6 +1802,17 @@
             convert();
         }
         if (e.target.type === 'checkbox') convert();
+    });
+
+    // ── Share button ──────────────────────────────────────────────
+    document.getElementById('share-btn').addEventListener('click', async () => {
+        const url = window.location.origin + window.location.pathname + '#' + encodeState();
+        try {
+            await navigator.clipboard.writeText(url);
+            const btn = document.getElementById('share-btn');
+            btn.textContent = 'copied!'; btn.classList.add('copied');
+            setTimeout(() => { btn.textContent = 'share'; btn.classList.remove('copied'); }, 2000);
+        } catch (_) {}
     });
 
     // ── Reset ─────────────────────────────────────────────────────
@@ -1495,7 +1853,8 @@
     // ── Init ──────────────────────────────────────────────────────
     onFormatChange();
     syncEulerLabels();
-    convert(); // populate results on load (identity rotation)
+    if (window.location.hash) decodeState(window.location.hash);
+    convert(); // populate results on load
 </script>
 </body>
 </html>
