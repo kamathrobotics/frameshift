@@ -608,49 +608,33 @@
             bottom: 16px;
             left: 16px;
             display: flex;
-            flex-direction: column;
-            gap: 4px;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
             z-index: 3;
             pointer-events: none;
-            background: rgba(6,10,15,0.55);
-            padding: 8px 10px;
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            backdrop-filter: blur(4px);
-        }
-
-        .legend-section-label {
-            font-family: var(--mono);
-            font-size: 8px;
-            color: var(--text-lo);
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            margin-bottom: 1px;
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
             font-family: var(--mono);
             font-size: 10px;
             color: var(--text);
             letter-spacing: 0.08em;
         }
 
-        .legend-line {
-            width: 16px;
-            height: 2px;
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
             flex-shrink: 0;
-            border-radius: 1px;
         }
 
-        .legend-line.solid.x  { background: #ff4444; }
-        .legend-line.solid.y  { background: #44dd44; }
-        .legend-line.solid.z  { background: #4488ff; }
-        .legend-line.dashed.x { background: repeating-linear-gradient(90deg, #ff4444 0 5px, transparent 5px 8px); }
-        .legend-line.dashed.y { background: repeating-linear-gradient(90deg, #44dd44 0 5px, transparent 5px 8px); }
-        .legend-line.dashed.z { background: repeating-linear-gradient(90deg, #4488ff 0 5px, transparent 5px 8px); }
+        .legend-dot.x { background: #ff4444; }
+        .legend-dot.y { background: #44dd44; }
+        .legend-dot.z { background: #4488ff; }
 
         /* Camera home button */
         .viewer-home-btn {
@@ -675,29 +659,6 @@
 
         .viewer-home-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 
-        /* Controls hint */
-        .controls-hint {
-            position: absolute;
-            bottom: 52px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 3;
-            background: rgba(9,13,20,0.75);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 4px 14px;
-            font-family: var(--mono);
-            font-size: 9px;
-            color: var(--text-lo);
-            letter-spacing: 0.08em;
-            pointer-events: none;
-            opacity: 1;
-            transition: opacity 0.8s ease;
-            backdrop-filter: blur(4px);
-            white-space: nowrap;
-        }
-
-        .controls-hint.fade { opacity: 0; }
 
         /* Viewer corner label */
         .viewer-label {
@@ -1188,17 +1149,10 @@
         <div class="viewer-overlay"></div>
         <button class="viewer-home-btn" id="viewer-home-btn" title="Reset camera view">⌂</button>
         <div class="axis-legend">
-            <div class="legend-section-label">World frame</div>
-            <div class="legend-item"><span class="legend-line dashed x"></span>X</div>
-            <div class="legend-item"><span class="legend-line dashed y"></span>Y</div>
-            <div class="legend-item"><span class="legend-line dashed z"></span>Z</div>
-            <div class="legend-section-label" style="margin-top:5px">Body frame</div>
-            <div class="legend-item"><span class="legend-line solid x"></span>X</div>
-            <div class="legend-item"><span class="legend-line solid y"></span>Y</div>
-            <div class="legend-item"><span class="legend-line solid z"></span>Z</div>
+            <div class="legend-item"><span class="legend-dot x"></span>X</div>
+            <div class="legend-item"><span class="legend-dot y"></span>Y</div>
+            <div class="legend-item"><span class="legend-dot z"></span>Z</div>
         </div>
-        <div class="controls-hint" id="controls-hint">drag to orbit · scroll to zoom · right-drag to pan</div>
-        <div class="viewer-label">Z-up · 3D Preview</div>
     </div>
 
 </div><!-- /app -->
@@ -1372,11 +1326,6 @@
         controls.update();
     });
 
-    // Fade controls hint after 3s
-    setTimeout(() => {
-        const hint = document.getElementById('controls-hint');
-        if (hint) hint.classList.add('fade');
-    }, 3000);
 
     // quat is [w, x, y, z]
     window.updateRotation = function(quat) {
