@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request, send_from_directory
+from flask import Flask, render_template, jsonify, request
 import numpy as np
 from scipy.spatial.transform import Rotation
 import os
@@ -13,65 +13,73 @@ def index():
 def convert_rotation():
     data = request.json
     input_format = data['format']
-    values = np.array(data['values'])
+    values = np.array(data['values'], dtype=float)
     input_degrees = data.get('inputDegrees', True)
     output_degrees = data.get('outputDegrees', True)
     input_rotation_order = data.get('inputRotationOrder', 'xyz')
     output_rotation_order = data.get('outputRotationOrder', 'xyz')
-    
+    # scipy: uppercase = intrinsic (body-fixed), lowercase = extrinsic (world-fixed)
+    intrinsic = data.get('intrinsic', True)
+    in_order  = input_rotation_order.upper()  if intrinsic else input_rotation_order.lower()
+    out_order = output_rotation_order.upper() if intrinsic else output_rotation_order.lower()
+    D = 8  # decimal places
+
+    def r8(v):
+        return round(float(v), D)
+
     try:
-        # Create rotation object based on input format
         if input_format == 'euler':
-            r = Rotation.from_euler(input_rotation_order, values, degrees=input_degrees)
+            r = Rotation.from_euler(in_order, values, degrees=input_degrees)
         elif input_format == 'quaternion':
-            r = Rotation.from_quat(values)
+            # UI provides [w, x, y, z]; scipy expects [x, y, z, w]
+            r = Rotation.from_quat([values[1], values[2], values[3], values[0]])
         elif input_format == 'matrix':
             r = Rotation.from_matrix(values.reshape(3, 3))
         elif input_format == 'axis-angle':
             angle = values[0]
             axis = values[1:]
-            # Normalize axis
-            axis = axis / np.linalg.norm(axis)
-            # Convert angle to radians if input is in degrees
+            norm = np.linalg.norm(axis)
+            axis = np.array([0.0, 0.0, 1.0]) if norm < 1e-10 else axis / norm
             if input_degrees:
                 angle = np.deg2rad(angle)
             r = Rotation.from_rotvec(angle * axis)
+        elif input_format == 'rotvec':
+            # UI provides [x, y, z] rotation vector (Rodrigues)
+            # magnitude = angle; direction = axis
+            if input_degrees:
+                angle = np.linalg.norm(values)
+                axis  = np.array([0.0, 0.0, 1.0]) if angle < 1e-10 else values / angle
+                values = axis * np.deg2rad(angle)
+            r = Rotation.from_rotvec(values)
         else:
             return jsonify({'error': 'Invalid format'}), 400
 
-        # Convert to all formats with specified output units
-        euler = r.as_euler(output_rotation_order, degrees=output_degrees)
-        quaternion = r.as_quat()  # returns in (x, y, z, w) format
-        # Convert quaternion to (w, x, y, z) format
-        quaternion = np.roll(quaternion, 1)
+        euler = r.as_euler(out_order, degrees=output_degrees)
+        quat = np.roll(r.as_quat(), 1)  # scipy [x,y,z,w] → [w,x,y,z]
         matrix = r.as_matrix()
         rotvec = r.as_rotvec()
-        
-        # Convert rotvec to axis-angle format
-        angle = np.linalg.norm(rotvec)
-        axis = np.array([0.0, 0.0, 1.0]) if angle == 0 else rotvec / angle
-        
-        # Convert angle to degrees if requested
+
+        angle_out = np.linalg.norm(rotvec)
+        axis_out = np.array([0.0, 0.0, 1.0]) if angle_out < 1e-10 else rotvec / angle_out
         if output_degrees:
-            angle = np.rad2deg(angle)
-        
+            angle_out = np.rad2deg(angle_out)
+
         return jsonify({
-            'euler': euler.tolist(),
-            'quaternion': quaternion.tolist(),
-            'matrix': matrix.tolist(),
+            'euler': [r8(v) for v in euler],
+            'quaternion': [r8(v) for v in quat],
+            'matrix': [[r8(v) for v in row] for row in matrix],
             'axisAngle': {
-                'angle': float(angle),
-                'axis': axis.tolist()
+                'angle': r8(angle_out),
+                'axis': [r8(v) for v in axis_out]
             },
+            'rotvec': [r8(v) for v in rotvec],
             'units': 'degrees' if output_degrees else 'radians',
-            'outputRotationOrder': output_rotation_order
+            'outputRotationOrder': output_rotation_order,
+            'intrinsic': intrinsic,
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 400
 
-# For local development
 if __name__ == '__main__':
-    app.run(debug=True)
-
-# For Vercel serverless deployment
-app = app.wsgi_app
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=True, port=port)
