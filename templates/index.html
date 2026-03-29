@@ -320,28 +320,60 @@
         .axis-label.z { color: var(--az); }
         .axis-label.w, .axis-label.dim { color: var(--text-lo); }
 
-        /* Matrix 3×3 grid */
-        .matrix-grid {
+        /* Matrix labeled input */
+        .matrix-labeled { margin-top: 10px; }
+
+        .matrix-col-headers {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: 22px repeat(3, 1fr);
             gap: 4px;
-            margin-top: 10px;
+            margin-bottom: 2px;
         }
 
-        .matrix-grid .num-input {
+        .matrix-row {
+            display: grid;
+            grid-template-columns: 22px repeat(3, 1fr);
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .mat-header {
+            font-family: var(--mono);
+            font-size: 9px;
+            color: var(--text-lo);
+            letter-spacing: 0.06em;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mat-header.row { justify-content: flex-end; padding-right: 4px; }
+
+        .matrix-row .num-input {
             text-align: center;
             padding: 6px 4px;
             font-size: 11px;
         }
 
-        .matrix-row-label {
-            grid-column: 1 / -1;
-            font-size: 9px;
-            color: var(--text-lo);
+        /* Normalize button */
+        .normalize-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            border: 1px solid var(--accent);
+            border-radius: var(--radius);
+            color: var(--accent);
+            font-family: var(--mono);
+            font-size: 10px;
             letter-spacing: 0.08em;
-            margin: 4px 0 2px;
-            text-transform: uppercase;
+            padding: 4px 10px;
+            margin-top: 6px;
+            width: 100%;
+            transition: background var(--tr), color var(--tr);
         }
+        .normalize-btn:hover { background: var(--accent-dim); }
 
         /* Axis subgroup (for axis-angle axis part) */
         .axis-subgroup {
@@ -503,13 +535,45 @@
             color: var(--text-lo);
         }
 
-        .res-matrix-grid {
+        /* res-matrix-grid removed; using res-matrix-output */
+
+        /* Matrix output labeled */
+        .res-matrix-output { margin-top: 2px; }
+
+        .res-mat-col-hdr {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: 20px repeat(3, 1fr);
             gap: 2px 4px;
+            margin-bottom: 2px;
         }
 
-        .res-matrix-grid span {
+        .res-mat-col-hdr span {
+            font-family: var(--mono);
+            font-size: 9px;
+            color: var(--text-lo);
+            text-align: right;
+            padding-right: 2px;
+        }
+
+        .res-mat-row {
+            display: grid;
+            grid-template-columns: 20px repeat(3, 1fr);
+            gap: 2px 4px;
+            margin-bottom: 2px;
+        }
+
+        .res-mat-lbl {
+            font-family: var(--mono);
+            font-size: 9px;
+            color: var(--text-lo);
+            text-align: right;
+            padding-right: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .res-mat-val {
             font-family: var(--mono);
             font-size: 11px;
             color: var(--green);
@@ -647,18 +711,19 @@
                         <option value="quaternion">Quaternion</option>
                         <option value="matrix">Rotation Matrix</option>
                         <option value="axis-angle">Axis-Angle</option>
+                        <option value="rotvec">Rotation Vector (Rodrigues)</option>
                     </select>
                 </div>
 
                 <div id="euler-order-field" class="field">
                     <label class="field-label">Rotation Order</label>
                     <select id="input-rotation-order" class="select">
-                        <option value="xyz">X → Y → Z</option>
-                        <option value="xzy">X → Z → Y</option>
-                        <option value="yxz">Y → X → Z</option>
-                        <option value="yzx">Y → Z → X</option>
-                        <option value="zxy">Z → X → Y</option>
-                        <option value="zyx">Z → Y → X</option>
+                        <option value="zyx">ZYX — RPY (ROS/URDF)</option>
+                        <option value="xyz">XYZ</option>
+                        <option value="xzy">XZY</option>
+                        <option value="yxz">YXZ</option>
+                        <option value="yzx">YZX</option>
+                        <option value="zxy">ZXY</option>
                     </select>
                 </div>
 
@@ -721,20 +786,36 @@
                         <input type="number" step="any" class="num-input" id="quat-z" placeholder="0">
                     </div>
                     <div class="norm-indicator" id="quat-norm">|q| = —</div>
+                    <button class="normalize-btn hidden" id="quat-normalize-btn">normalize</button>
                 </div>
 
-                <!-- Matrix Inputs (3×3 grid) -->
+                <!-- Matrix Inputs (3×3 labeled grid) -->
                 <div id="matrix-inputs" class="hidden">
-                    <div class="matrix-grid">
-                        <input type="number" step="any" class="num-input" placeholder="m₁₁" data-mi="0">
-                        <input type="number" step="any" class="num-input" placeholder="m₁₂" data-mi="1">
-                        <input type="number" step="any" class="num-input" placeholder="m₁₃" data-mi="2">
-                        <input type="number" step="any" class="num-input" placeholder="m₂₁" data-mi="3">
-                        <input type="number" step="any" class="num-input" placeholder="m₂₂" data-mi="4">
-                        <input type="number" step="any" class="num-input" placeholder="m₂₃" data-mi="5">
-                        <input type="number" step="any" class="num-input" placeholder="m₃₁" data-mi="6">
-                        <input type="number" step="any" class="num-input" placeholder="m₃₂" data-mi="7">
-                        <input type="number" step="any" class="num-input" placeholder="m₃₃" data-mi="8">
+                    <div class="matrix-labeled">
+                        <div class="matrix-col-headers">
+                            <span></span>
+                            <span class="mat-header">C₁</span>
+                            <span class="mat-header">C₂</span>
+                            <span class="mat-header">C₃</span>
+                        </div>
+                        <div class="matrix-row">
+                            <span class="mat-header row">R₁</span>
+                            <input type="number" step="any" class="num-input" placeholder="1" data-mi="0">
+                            <input type="number" step="any" class="num-input" placeholder="0" data-mi="1">
+                            <input type="number" step="any" class="num-input" placeholder="0" data-mi="2">
+                        </div>
+                        <div class="matrix-row">
+                            <span class="mat-header row">R₂</span>
+                            <input type="number" step="any" class="num-input" placeholder="0" data-mi="3">
+                            <input type="number" step="any" class="num-input" placeholder="1" data-mi="4">
+                            <input type="number" step="any" class="num-input" placeholder="0" data-mi="5">
+                        </div>
+                        <div class="matrix-row">
+                            <span class="mat-header row">R₃</span>
+                            <input type="number" step="any" class="num-input" placeholder="0" data-mi="6">
+                            <input type="number" step="any" class="num-input" placeholder="0" data-mi="7">
+                            <input type="number" step="any" class="num-input" placeholder="1" data-mi="8">
+                        </div>
                     </div>
                 </div>
 
@@ -760,6 +841,22 @@
                         </div>
                     </div>
                 </div>
+                <!-- Rotation Vector Inputs -->
+                <div id="rotvec-inputs" class="inputs-group hidden">
+                    <div class="input-row">
+                        <span class="axis-label x">X</span>
+                        <input type="number" step="any" class="num-input" id="rv-x" placeholder="0">
+                    </div>
+                    <div class="input-row">
+                        <span class="axis-label y">Y</span>
+                        <input type="number" step="any" class="num-input" id="rv-y" placeholder="0">
+                    </div>
+                    <div class="input-row">
+                        <span class="axis-label z">Z</span>
+                        <input type="number" step="any" class="num-input" id="rv-z" placeholder="0">
+                    </div>
+                    <div class="norm-indicator" id="rv-hint">magnitude = angle in radians</div>
+                </div>
                 <button class="reset-btn" id="reset-btn">reset</button>
             </div>
 
@@ -772,12 +869,12 @@
                 <div class="field">
                     <label class="field-label">Euler Order</label>
                     <select id="output-euler-order" class="select">
-                        <option value="xyz">X → Y → Z</option>
-                        <option value="xzy">X → Z → Y</option>
-                        <option value="yxz">Y → X → Z</option>
-                        <option value="yzx">Y → Z → X</option>
-                        <option value="zxy">Z → X → Y</option>
-                        <option value="zyx">Z → Y → X</option>
+                        <option value="zyx">ZYX — RPY (ROS/URDF)</option>
+                        <option value="xyz">XYZ</option>
+                        <option value="xzy">XZY</option>
+                        <option value="yxz">YXZ</option>
+                        <option value="yzx">YZX</option>
+                        <option value="zxy">ZXY</option>
                     </select>
                 </div>
 
@@ -791,6 +888,16 @@
                         </label>
                         <span class="toggle-opt">deg</span>
                     </div>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">Precision</label>
+                    <select id="precision-select" class="select">
+                        <option value="4">4 decimal places</option>
+                        <option value="6" selected>6 decimal places</option>
+                        <option value="8">8 decimal places</option>
+                        <option value="10">10 decimal places</option>
+                    </select>
                 </div>
             </div>
 
@@ -840,6 +947,16 @@
                             <button class="copy-btn" data-copy="axis-angle">copy</button>
                         </div>
                         <div class="result-values" id="res-axis-angle"></div>
+                    </div>
+
+                    <div class="result-block">
+                        <div class="result-header">
+                            <span class="result-title">Rotation Vector</span>
+                            <span class="result-meta">Rodrigues · rad</span>
+                            <span class="conv-badge">rotvec</span>
+                            <button class="copy-btn" data-copy="rotvec">copy</button>
+                        </div>
+                        <div class="result-values" id="res-rotvec"></div>
                     </div>
 
                 </div>
@@ -1041,7 +1158,7 @@
     let debounceTimer = null;
 
     // ── Format switching ─────────────────────────────────────────
-    const ALL_INPUT_GROUPS = ['euler-inputs', 'quaternion-inputs', 'matrix-inputs', 'axis-angle-inputs'];
+    const ALL_INPUT_GROUPS = ['euler-inputs', 'quaternion-inputs', 'matrix-inputs', 'axis-angle-inputs', 'rotvec-inputs'];
 
     function onFormatChange() {
         const fmt = document.getElementById('format').value;
@@ -1051,7 +1168,7 @@
         });
 
         const showOrder = fmt === 'euler';
-        const showUnits = fmt === 'euler' || fmt === 'axis-angle';
+        const showUnits = fmt === 'euler' || fmt === 'axis-angle' || fmt === 'rotvec';
 
         document.getElementById('euler-order-field').classList.toggle('hidden', !showOrder);
         document.getElementById('intrinsic-field').classList.toggle('hidden', !showOrder);
@@ -1076,14 +1193,17 @@
         const ids = ['quat-w', 'quat-x', 'quat-y', 'quat-z'];
         const vals = ids.map(id => parseFloat(document.getElementById(id).value) || 0);
         const norm = Math.sqrt(vals.reduce((s, v) => s + v * v, 0));
-        const el = document.getElementById('quat-norm');
+        const el  = document.getElementById('quat-norm');
+        const btn = document.getElementById('quat-normalize-btn');
         if (norm === 0) {
             el.textContent = '|q| = —';
             el.className = 'norm-indicator';
+            btn.classList.add('hidden');
         } else {
             const ok = Math.abs(norm - 1) < 0.001;
             el.textContent = '|q| = ' + norm.toFixed(6);
             el.className = 'norm-indicator ' + (ok ? 'ok' : 'bad');
+            btn.classList.toggle('hidden', ok);
         }
     }
 
@@ -1121,6 +1241,13 @@
                     const v = parseFloat(el.value);
                     return isNaN(v) ? identityFlat[i] : v;
                 });
+        }
+
+        if (fmt === 'rotvec') {
+            return ['rv-x', 'rv-y', 'rv-z'].map(id => {
+                const v = parseField(id);
+                return isNaN(v) ? 0 : v;
+            });
         }
 
         // axis-angle: angle=0, axis=[0,0,1]
@@ -1182,7 +1309,10 @@
     }
 
     // ── Render results ────────────────────────────────────────────
-    function f6(v) { return v.toFixed(6); }
+    function f6(v) {
+        const p = parseInt(document.getElementById('precision-select').value, 10) || 6;
+        return v.toFixed(p);
+    }
 
     function renderResults(data) {
         const emptyEl = document.getElementById('results-empty');
@@ -1219,8 +1349,14 @@
 
         // Matrix
         document.getElementById('res-matrix').innerHTML =
-            `<div class="res-matrix-grid">
-                ${data.matrix.flat().map(v => `<span>${f6(v)}</span>`).join('')}
+            `<div class="res-matrix-output">
+                <div class="res-mat-col-hdr"><span></span><span>C₁</span><span>C₂</span><span>C₃</span></div>
+                ${data.matrix.map((row, ri) =>
+                    `<div class="res-mat-row">
+                        <span class="res-mat-lbl">R${ri+1}</span>
+                        ${row.map(v => `<span class="res-mat-val">${f6(v)}</span>`).join('')}
+                    </div>`
+                ).join('')}
             </div>`;
 
         // Axis-Angle
@@ -1237,6 +1373,18 @@
                     <span class="val-number">${f6(data.axisAngle.axis[i])}</span>
                 </div>`
             ).join('')}`;
+
+        // Rotation Vector
+        if (data.rotvec) {
+            document.getElementById('res-rotvec').innerHTML =
+                ['x','y','z'].map((lbl, i) =>
+                    `<div class="result-row">
+                        <span class="val-label">${lbl}</span>
+                        <span class="val-number">${f6(data.rotvec[i])}</span>
+                        <span class="val-unit"> rad</span>
+                    </div>`
+                ).join('');
+        }
     }
 
     function showError(msg) {
@@ -1273,6 +1421,9 @@
                 text = `Axis-Angle (${d.units}): angle=${f8(d.axisAngle.angle)}`
                      + `  axis=[${d.axisAngle.axis.map(f8).join(', ')}]`;
                 break;
+            case 'rotvec':
+                text = d.rotvec ? `Rotation Vector (rad): [${d.rotvec.map(f8).join(', ')}]` : '';
+                break;
         }
 
         try {
@@ -1297,12 +1448,28 @@
         if (e.target.tagName === 'SELECT') {
             if (e.target.id === 'format') onFormatChange();
             else if (e.target.id === 'input-rotation-order') syncEulerLabels();
+            else if (e.target.id === 'precision-select') {
+                if (lastResult) renderResults(lastResult);
+                return;
+            }
             convert();
         }
         if (e.target.type === 'checkbox') convert();
     });
 
     // ── Reset ─────────────────────────────────────────────────────
+    document.getElementById('quat-normalize-btn').addEventListener('click', () => {
+        const ids = ['quat-w', 'quat-x', 'quat-y', 'quat-z'];
+        const vals = ids.map(id => parseFloat(document.getElementById(id).value) || 0);
+        const norm = Math.sqrt(vals.reduce((s, v) => s + v * v, 0));
+        if (norm < 1e-10) return;
+        ids.forEach((id, i) => {
+            document.getElementById(id).value = (vals[i] / norm).toFixed(8);
+        });
+        updateQuatNorm();
+        convert();
+    });
+
     document.getElementById('reset-btn').addEventListener('click', () => {
         // Euler — identity (all zeros)
         ['euler-0','euler-1','euler-2'].forEach(id => document.getElementById(id).value = '0');
@@ -1319,6 +1486,8 @@
         document.getElementById('aa-x').value = '0';
         document.getElementById('aa-y').value = '0';
         document.getElementById('aa-z').value = '1';
+        // Rotation Vector — zero vector
+        ['rv-x', 'rv-y', 'rv-z'].forEach(id => document.getElementById(id).value = '0');
         // Fire conversion to refresh results and viewer
         convert();
     });
