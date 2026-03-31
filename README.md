@@ -12,10 +12,6 @@ A simple web application to convert between different 3D rotation formats (Euler
 - Real-time 3D visualization using Three.js
 - Interactive 3D viewer with orbit controls
 
-## Live Demo
-
-Visit [https://3d-rotation-converter.vercel.app](https://3d-rotation-converter.vercel.app) to try it out!
-
 ## Local Development
 
 1. Create a virtual environment (optional but recommended):
@@ -58,17 +54,6 @@ Visit [https://3d-rotation-converter.vercel.app](https://3d-rotation-converter.v
   - Three.js for 3D visualization
   - Vanilla JavaScript
   - HTML/CSS
-
-## Deployment
-
-The application is deployed on Vercel using their Python runtime. The deployment configuration is handled by `vercel.json` in the root directory.
-
-To deploy your own instance:
-
-1. Fork this repository
-2. Create a new project on Vercel
-3. Connect your forked repository
-4. Deploy!
 
 ## Contributing
 

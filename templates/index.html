@@ -153,7 +153,7 @@
             font-weight: 500;
             letter-spacing: 0.2em;
             text-transform: uppercase;
-            color: var(--text-lo);
+            color: var(--text);
             margin-bottom: 12px;
         }
 
@@ -477,7 +477,7 @@
             background: none;
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            color: var(--text-lo);
+            color: var(--text);
             font-family: var(--mono);
             font-size: 10px;
             letter-spacing: 0.08em;
@@ -488,7 +488,7 @@
             margin-top: 10px;
         }
 
-        .reset-btn:hover { border-color: var(--border-hi); color: var(--text); }
+        .reset-btn:hover { border-color: var(--border-hi); color: var(--text-hi); }
 
         .result-values { display: flex; flex-direction: column; gap: 3px; }
 
@@ -682,7 +682,7 @@
             background: none;
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            color: var(--text-lo);
+            color: var(--text);
             font-family: var(--mono);
             font-size: 10px;
             letter-spacing: 0.08em;
@@ -691,7 +691,7 @@
             width: 100%;
             transition: border-color var(--tr), color var(--tr);
         }
-        .copy-all-btn:hover { border-color: var(--border-hi); color: var(--text); }
+        .copy-all-btn:hover { border-color: var(--border-hi); color: var(--text-hi); }
         .copy-all-btn.copied { border-color: var(--green); color: var(--green); }
 
         /* Copy dropdown */
@@ -844,14 +844,14 @@
                         <option value="quaternion">Quaternion</option>
                         <option value="matrix">Rotation Matrix</option>
                         <option value="axis-angle">Axis-Angle</option>
-                        <option value="rotvec">Rotation Vector (Rodrigues)</option>
+                        <option value="rotvec">Rotation Vector</option>
                     </select>
                 </div>
 
                 <div id="euler-order-field" class="field">
                     <label class="field-label">Rotation Order</label>
                     <select id="input-rotation-order" class="select">
-                        <option value="zyx">ZYX — RPY (ROS/URDF)</option>
+                        <option value="zyx" selected>ZYX</option>
                         <option value="xyz">XYZ</option>
                         <option value="xzy">XZY</option>
                         <option value="yxz">YXZ</option>
@@ -860,17 +860,6 @@
                     </select>
                 </div>
 
-                <div id="intrinsic-field" class="field toggle-field">
-                    <label class="field-label">Convention</label>
-                    <div class="toggle-group">
-                        <span class="toggle-opt">extrinsic</span>
-                        <label class="toggle">
-                            <input type="checkbox" id="intrinsic-toggle" checked>
-                            <span class="track"><span class="thumb"></span></span>
-                        </label>
-                        <span class="toggle-opt">intrinsic</span>
-                    </div>
-                </div>
 
                 <div id="angle-units-field" class="field toggle-field">
                     <label class="field-label">Units</label>
@@ -999,17 +988,6 @@
             <div class="section">
                 <div class="section-label">Output</div>
 
-                <div class="field">
-                    <label class="field-label">Euler Order</label>
-                    <select id="output-euler-order" class="select">
-                        <option value="zyx">ZYX — RPY (ROS/URDF)</option>
-                        <option value="xyz">XYZ</option>
-                        <option value="xzy">XZY</option>
-                        <option value="yxz">YXZ</option>
-                        <option value="yzx">YZX</option>
-                        <option value="zxy">ZXY</option>
-                    </select>
-                </div>
 
                 <div class="field toggle-field">
                     <label class="field-label">Units</label>
@@ -1023,15 +1001,6 @@
                     </div>
                 </div>
 
-                <div class="field">
-                    <label class="field-label">Precision</label>
-                    <select id="precision-select" class="select">
-                        <option value="4">4 decimal places</option>
-                        <option value="6" selected>6 decimal places</option>
-                        <option value="8">8 decimal places</option>
-                        <option value="10">10 decimal places</option>
-                    </select>
-                </div>
             </div>
 
             <div class="divider"></div>
@@ -1066,7 +1035,6 @@
                         <div class="result-header">
                             <span class="result-title">Quaternion</span>
                             <span class="result-meta">w x y z</span>
-                            <span class="conv-badge">Hamilton</span>
                             <div class="copy-wrap">
                                 <button class="copy-btn" data-copy="quaternion" data-fmt="plain">copy</button>
                                 <button class="copy-fmt-btn" data-menu="quaternion">▾</button>
@@ -1085,7 +1053,6 @@
                         <div class="result-header">
                             <span class="result-title">Matrix</span>
                             <span class="result-meta">3 × 3</span>
-                            <span class="conv-badge">Active</span>
                             <div class="copy-wrap">
                                 <button class="copy-btn" data-copy="matrix" data-fmt="plain">copy</button>
                                 <button class="copy-fmt-btn" data-menu="matrix">▾</button>
@@ -1120,8 +1087,7 @@
                     <div class="result-block">
                         <div class="result-header">
                             <span class="result-title">Rotation Vector</span>
-                            <span class="result-meta">Rodrigues · rad</span>
-                            <span class="conv-badge">rotvec</span>
+                            <span class="result-meta">rad</span>
                             <div class="copy-wrap">
                                 <button class="copy-btn" data-copy="rotvec" data-fmt="plain">copy</button>
                                 <button class="copy-fmt-btn" data-menu="rotvec">▾</button>
@@ -1353,9 +1319,7 @@
             iu: document.getElementById('input-units-toggle').checked ? 1 : 0,
             ou: document.getElementById('output-units-toggle').checked ? 1 : 0,
             io: document.getElementById('input-rotation-order').value,
-            oo: document.getElementById('output-euler-order').value,
-            ix: document.getElementById('intrinsic-toggle').checked ? 1 : 0,
-            p:  document.getElementById('precision-select').value,
+            ix: 1,
         };
         return btoa(JSON.stringify(state));
     }
@@ -1375,9 +1339,6 @@
             document.getElementById('input-units-toggle').checked  = !!state.iu;
             document.getElementById('output-units-toggle').checked = !!state.ou;
             document.getElementById('input-rotation-order').value  = state.io || 'zyx';
-            document.getElementById('output-euler-order').value    = state.oo || 'zyx';
-            document.getElementById('intrinsic-toggle').checked    = state.ix !== 0;
-            document.getElementById('precision-select').value      = state.p  || '6';
             syncEulerLabels();
             return true;
         } catch (e) { return false; }
@@ -1397,10 +1358,18 @@
         const showUnits = fmt === 'euler' || fmt === 'axis-angle' || fmt === 'rotvec';
 
         document.getElementById('euler-order-field').classList.toggle('hidden', !showOrder);
-        document.getElementById('intrinsic-field').classList.toggle('hidden', !showOrder);
         document.getElementById('angle-units-field').classList.toggle('hidden', !showUnits);
 
+        if (fmt === 'rotvec') syncRvHint();
+
         scheduleConvert();
+    }
+
+    // ── Rotation vector hint sync ─────────────────────────────────
+    function syncRvHint() {
+        const deg = document.getElementById('input-units-toggle').checked;
+        document.getElementById('rv-hint').textContent =
+            'magnitude = angle in ' + (deg ? 'degrees' : 'radians');
     }
 
     // ── Rotation order label sync ─────────────────────────────────
@@ -1496,8 +1465,8 @@
         const inputDegrees  = document.getElementById('input-units-toggle').checked;
         const outputDegrees = document.getElementById('output-units-toggle').checked;
         const inputRotationOrder  = document.getElementById('input-rotation-order').value;
-        const outputRotationOrder = document.getElementById('output-euler-order').value;
-        const intrinsic = document.getElementById('intrinsic-toggle').checked;
+        const outputRotationOrder = inputRotationOrder;
+        const intrinsic = true;
 
         // Pre-flight: catch zero quaternion before hitting the server
         if (format === 'quaternion') {
@@ -1536,10 +1505,7 @@
     }
 
     // ── Render results ────────────────────────────────────────────
-    function f6(v) {
-        const p = parseInt(document.getElementById('precision-select').value, 10) || 6;
-        return v.toFixed(p);
-    }
+    function f6(v) { return v.toFixed(6); }
 
     function renderResults(data) {
         const emptyEl = document.getElementById('results-empty');
@@ -1550,13 +1516,11 @@
 
         const unitSym  = data.units === 'degrees' ? '°' : ' rad';
         const order    = data.outputRotationOrder.toUpperCase();
-        const convType = data.intrinsic ? 'intrinsic' : 'extrinsic';
-
         // Axis-angle range: scipy as_rotvec gives angle in [-π, π]
         const aaRange  = data.units === 'degrees' ? '−180° … 180°' : '−π … π';
 
         // Euler
-        document.getElementById('euler-meta').textContent = order + ' · ' + data.units + ' · ' + convType;
+        document.getElementById('euler-meta').textContent = order + ' · ' + data.units;
         document.getElementById('res-euler').innerHTML =
             order.split('').map((lbl, i) =>
                 `<div class="result-row">
@@ -1630,6 +1594,22 @@
         lastResult = null;
     }
 
+    // ── Clipboard helper (works on HTTP and in iframes) ───────────
+    async function writeClipboard(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+            return navigator.clipboard.writeText(text);
+        }
+        // Fallback: textarea + execCommand (HTTP / non-secure contexts)
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;pointer-events:none';
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+    }
+
     // ── Copy to clipboard ─────────────────────────────────────────
     document.addEventListener('click', async e => {
         // Close menus on outside click
@@ -1651,7 +1631,7 @@
         const type = btn.dataset.copy;
         const fmt  = btn.dataset.fmt || 'plain';
         const d    = lastResult;
-        const fC   = v => v.toFixed(parseInt(document.getElementById('precision-select').value, 10) || 6);
+        const fC   = v => v.toFixed(6);
         let text   = '';
 
         const fmtEuler = () => {
@@ -1703,7 +1683,7 @@
         }
         if (!text) return;
         try {
-            await navigator.clipboard.writeText(text);
+            await writeClipboard(text);
             const main = document.querySelector(`.copy-btn[data-copy="${type}"]`);
             if (main) { main.textContent = 'copied!'; main.classList.add('copied'); setTimeout(() => { main.textContent = 'copy'; main.classList.remove('copied'); }, 1500); }
             document.querySelectorAll('.copy-menu.open').forEach(m => m.classList.remove('open'));
@@ -1714,7 +1694,7 @@
     document.getElementById('copy-all-btn').addEventListener('click', async () => {
         if (!lastResult) return;
         const d = lastResult;
-        const fC = v => v.toFixed(parseInt(document.getElementById('precision-select').value, 10) || 6);
+        const fC = v => v.toFixed(6);
         const lines = [
             `Euler (${d.outputRotationOrder.toUpperCase()}, ${d.units}): ${d.euler.map(fC).join('  ')}`,
             `Quaternion (w x y z): ${d.quaternion.map(fC).join('  ')}`,
@@ -1723,7 +1703,7 @@
         ];
         if (d.rotvec) lines.push(`Rotation Vector (rad): [${d.rotvec.map(fC).join(', ')}]`);
         try {
-            await navigator.clipboard.writeText(lines.join('\n\n'));
+            await writeClipboard(lines.join('\n\n'));
             const btn = document.getElementById('copy-all-btn');
             btn.textContent = 'copied all!'; btn.classList.add('copied');
             setTimeout(() => { btn.textContent = 'copy all formats'; btn.classList.remove('copied'); }, 1500);
@@ -1744,20 +1724,20 @@
         if (e.target.tagName === 'SELECT') {
             if (e.target.id === 'format') onFormatChange();
             else if (e.target.id === 'input-rotation-order') syncEulerLabels();
-            else if (e.target.id === 'precision-select') {
-                if (lastResult) renderResults(lastResult);
-                return;
-            }
             convert();
         }
         if (e.target.type === 'checkbox') convert();
+    });
+
+    document.getElementById('input-units-toggle').addEventListener('change', () => {
+        if (document.getElementById('format').value === 'rotvec') syncRvHint();
     });
 
     // ── Share button ──────────────────────────────────────────────
     document.getElementById('share-btn').addEventListener('click', async () => {
         const url = window.location.origin + window.location.pathname + '#' + encodeState();
         try {
-            await navigator.clipboard.writeText(url);
+            await writeClipboard(url);
             const btn = document.getElementById('share-btn');
             btn.textContent = 'copied!'; btn.classList.add('copied');
             setTimeout(() => { btn.textContent = 'share'; btn.classList.remove('copied'); }, 2000);

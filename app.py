@@ -18,10 +18,9 @@ def convert_rotation():
     output_degrees = data.get('outputDegrees', True)
     input_rotation_order = data.get('inputRotationOrder', 'xyz')
     output_rotation_order = data.get('outputRotationOrder', 'xyz')
-    # scipy: uppercase = intrinsic (body-fixed), lowercase = extrinsic (world-fixed)
-    intrinsic = data.get('intrinsic', True)
-    in_order  = input_rotation_order.upper()  if intrinsic else input_rotation_order.lower()
-    out_order = output_rotation_order.upper() if intrinsic else output_rotation_order.lower()
+    # Always intrinsic (uppercase = body-fixed axes, standard in robotics/URDF/ROS)
+    in_order  = input_rotation_order.upper()
+    out_order = output_rotation_order.upper()
     D = 8  # decimal places
 
     def r8(v):
@@ -75,7 +74,6 @@ def convert_rotation():
             'rotvec': [r8(v) for v in rotvec],
             'units': 'degrees' if output_degrees else 'radians',
             'outputRotationOrder': output_rotation_order,
-            'intrinsic': intrinsic,
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 400
