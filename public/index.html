@@ -1568,7 +1568,6 @@
             } else {
                 lastResult = data;
                 renderResults(data);
-                history.replaceState(null, '', '#' + encodeState());
                 if (window.updateRotation) {
                     window.updateRotation(data.quaternion);
                 } else {
