@@ -1306,7 +1306,7 @@
 </script>
 
 <script>
-    // ── Rotation Math (pure JS, replaces scipy backend) ──────────
+    // ── Rotation Math (pure JS, runs entirely in the browser) ────
     const _DEG = Math.PI / 180;
     const _RAD = 180 / Math.PI;
     const _D = 8;
@@ -1592,7 +1592,7 @@
 
         const unitSym  = data.units === 'degrees' ? '°' : ' rad';
         const order    = data.outputRotationOrder.toUpperCase();
-        // Axis-angle range: scipy as_rotvec gives angle in [-π, π]
+        // Axis-angle range: _toRV flips sign so angle is in [-π, π]
         const aaRange  = data.units === 'degrees' ? '−180° … 180°' : '−π … π';
 
         // Euler
