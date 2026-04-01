@@ -40,6 +40,12 @@ next-env.d.ts
 # Memory Bank
 memory-bank/
 
+# Wrangler
+.wrangler/
+
+# Claude
+.claude/
+
 # Python
 venv/
 __pycache__/

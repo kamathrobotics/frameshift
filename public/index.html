@@ -533,7 +533,7 @@
             margin-bottom: 2px;
         }
 
-        .res-mat-col-hdr span {
+        .res-mat-col-hdr span, .res-mat-col-hdr-cell {
             font-family: var(--mono);
             font-size: 9px;
             color: var(--text-lo);
@@ -544,6 +544,13 @@
         .res-mat-row {
             display: grid;
             grid-template-columns: 20px repeat(3, 1fr);
+            gap: 2px 4px;
+            margin-bottom: 2px;
+        }
+
+        .res-mat-row-4 {
+            display: grid;
+            grid-template-columns: 20px repeat(4, 1fr);
             gap: 2px 4px;
             margin-bottom: 2px;
         }
@@ -979,8 +986,27 @@
                     </div>
                     <div class="norm-indicator" id="rv-hint">magnitude = angle in radians</div>
                 </div>
-                <button class="reset-btn" id="reset-btn">reset</button>
             </div>
+
+            <!-- TRANSLATION SECTION -->
+            <div class="section">
+                <div class="section-label">Translation</div>
+                <div class="field">
+                    <div class="input-row">
+                        <span class="axis-label x">X</span>
+                        <input type="number" step="any" class="num-input" id="tx" placeholder="0">
+                    </div>
+                    <div class="input-row">
+                        <span class="axis-label y">Y</span>
+                        <input type="number" step="any" class="num-input" id="ty" placeholder="0">
+                    </div>
+                    <div class="input-row">
+                        <span class="axis-label z">Z</span>
+                        <input type="number" step="any" class="num-input" id="tz" placeholder="0">
+                    </div>
+                </div>
+            </div>
+            <button class="reset-btn" id="reset-btn">reset</button>
 
             <div class="divider"></div>
 
@@ -1100,6 +1126,24 @@
                             </div>
                         </div>
                         <div class="result-values" id="res-rotvec"></div>
+                    </div>
+
+                    <div class="result-block">
+                        <div class="result-header">
+                            <span class="result-title">Homogeneous Transform</span>
+                            <span class="result-meta">4 × 4</span>
+                            <div class="copy-wrap">
+                                <button class="copy-btn" data-copy="homogeneous" data-fmt="plain">copy</button>
+                                <button class="copy-fmt-btn" data-menu="homogeneous">▾</button>
+                                <div class="copy-menu" id="copy-menu-homogeneous">
+                                    <button class="copy-menu-item" data-copy="homogeneous" data-fmt="plain">Plain text</button>
+                                    <button class="copy-menu-item" data-copy="homogeneous" data-fmt="python">NumPy array</button>
+                                    <button class="copy-menu-item" data-copy="homogeneous" data-fmt="json">JSON</button>
+                                    <button class="copy-menu-item" data-copy="homogeneous" data-fmt="matlab">MATLAB</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="result-values" id="res-homogeneous"></div>
                     </div>
 
                     <button class="copy-all-btn hidden" id="copy-all-btn">copy all formats</button>
@@ -1293,15 +1337,18 @@
     });
 
 
-    // quat is [w, x, y, z]
-    window.updateRotation = function(quat) {
+    // quat is [w, x, y, z], t is [x, y, z] translation
+    window.updateRotation = function(quat, t) {
         cube.quaternion.set(quat[1], quat[2], quat[3], quat[0]);
+        if (t) { cube.position.set(t[0], t[1], t[2]); }
+        else   { cube.position.set(0, 0, 0); }
     };
 
     // Apply any rotation that was computed before Three.js loaded
     if (window._pendingQuat) {
-        window.updateRotation(window._pendingQuat);
+        window.updateRotation(window._pendingQuat, window._pendingTranslation);
         window._pendingQuat = null;
+        window._pendingTranslation = null;
     }
 </script>
 
@@ -1366,8 +1413,9 @@
     }
 
     function convertRotation(data) {
-        const {format:fmt, values, inputDegrees, outputDegrees, inputRotationOrder, outputRotationOrder} = data;
+        const {format:fmt, values, inputDegrees, outputDegrees, inputRotationOrder, outputRotationOrder, translation} = data;
         const inO=(inputRotationOrder||'xyz').toUpperCase(), outO=(outputRotationOrder||'xyz').toUpperCase();
+        const t = translation || [0, 0, 0];
         let q;
         try {
             if(fmt==='euler'){const a=inputDegrees?values.map(v=>v*_DEG):[...values];q=_fromEuler(inO,a);}
@@ -1380,8 +1428,17 @@
             const quatW=[q[3],q[0],q[1],q[2]]; const matrix=_toMatrix(q); const rotvec=_toRV(q);
             const aOut=_norm3(rotvec); const axOut=aOut<1e-10?[0,0,1]:rotvec.map(v=>v/aOut);
             const aaAngle=outputDegrees?aOut*_RAD:aOut;
-            return {euler:eulerOut.map(_r8),quaternion:quatW.map(_r8),matrix:matrix.map(r=>r.map(_r8)),
+            // 4×4 homogeneous transform: [R | t; 0 0 0 1]
+            const matR = matrix.map(r=>r.map(_r8));
+            const hom = [
+                [...matR[0], _r8(t[0])],
+                [...matR[1], _r8(t[1])],
+                [...matR[2], _r8(t[2])],
+                [0, 0, 0, 1]
+            ];
+            return {euler:eulerOut.map(_r8),quaternion:quatW.map(_r8),matrix:matR,
                 axisAngle:{angle:_r8(aaAngle),axis:axOut.map(_r8)},rotvec:rotvec.map(_r8),
+                homogeneous:hom, translation:t.map(_r8),
                 units:outputDegrees?'degrees':'radians',outputRotationOrder:(outputRotationOrder||'xyz')};
         } catch(e){return {error:e.message||String(e)};}
     }
@@ -1398,6 +1455,7 @@
         const state = {
             f:  fmt,
             v:  getValues(),
+            t:  getTranslation(),
             iu: document.getElementById('input-units-toggle').checked ? 1 : 0,
             ou: document.getElementById('output-units-toggle').checked ? 1 : 0,
             io: document.getElementById('input-rotation-order').value,
@@ -1418,6 +1476,7 @@
             else if (state.f === 'matrix')     { document.querySelectorAll('#matrix-inputs .num-input').forEach((el,i) => el.value = state.v[i]); }
             else if (state.f === 'axis-angle') { ['aa-angle','aa-x','aa-y','aa-z'].forEach((id,i) => setV(id, state.v[i])); }
             else if (state.f === 'rotvec')     { ['rv-x','rv-y','rv-z'].forEach((id,i) => setV(id, state.v[i])); }
+            if (state.t) { ['tx','ty','tz'].forEach((id,i) => setV(id, state.t[i])); }
             document.getElementById('input-units-toggle').checked  = !!state.iu;
             document.getElementById('output-units-toggle').checked = !!state.ou;
             document.getElementById('input-rotation-order').value  = state.io || 'zyx';
@@ -1541,9 +1600,17 @@
         debounceTimer = setTimeout(convert, 350);
     }
 
+    function getTranslation() {
+        return ['tx', 'ty', 'tz'].map(id => {
+            const v = parseFloat(document.getElementById(id).value);
+            return isNaN(v) ? 0 : v;
+        });
+    }
+
     async function convert() {
         const format  = document.getElementById('format').value;
         const values  = getValues();
+        const translation = getTranslation();
         const inputDegrees  = document.getElementById('input-units-toggle').checked;
         const outputDegrees = document.getElementById('output-units-toggle').checked;
         const inputRotationOrder  = document.getElementById('input-rotation-order').value;
@@ -1561,7 +1628,7 @@
         try {
             const data = convertRotation({
                 format, values, inputDegrees, outputDegrees,
-                inputRotationOrder, outputRotationOrder
+                inputRotationOrder, outputRotationOrder, translation
             });
             if (data.error) {
                 showError(data.error);
@@ -1569,9 +1636,10 @@
                 lastResult = data;
                 renderResults(data);
                 if (window.updateRotation) {
-                    window.updateRotation(data.quaternion);
+                    window.updateRotation(data.quaternion, data.translation);
                 } else {
                     window._pendingQuat = data.quaternion;
+                    window._pendingTranslation = data.translation;
                 }
             }
         } catch (e) {
@@ -1649,6 +1717,23 @@
                         <span class="val-label">${lbl}</span>
                         <span class="val-number">${f6(data.rotvec[i])}</span>
                         <span class="val-unit"> rad</span>
+                    </div>`
+                ).join('');
+        }
+
+        // Homogeneous Transform 4×4
+        if (data.homogeneous) {
+            const rowLabels = ['R1','R2','R3','R4'];
+            document.getElementById('res-homogeneous').innerHTML =
+                `<div class="res-mat-row-4" style="margin-bottom:4px">
+                    <span></span><span class="res-mat-col-hdr-cell">C₁</span><span class="res-mat-col-hdr-cell">C₂</span><span class="res-mat-col-hdr-cell">C₃</span><span class="res-mat-col-hdr-cell">C₄</span>
+                </div>` +
+                data.homogeneous.map((row, ri) =>
+                    `<div class="res-mat-row-4">
+                        <span class="res-mat-lbl">${rowLabels[ri]}</span>
+                        ${row.map(v =>
+                            `<span class="res-mat-val">${ri < 3 ? f6(v) : v.toFixed(0)}</span>`
+                        ).join('')}
                     </div>`
                 ).join('');
         }
@@ -1748,13 +1833,25 @@
                 default:        return `Rotation Vector (rad): [${d.rotvec.map(fC).join(', ')}]`;
             }
         };
+        const fmtHom = () => {
+            if (!d.homogeneous) return '';
+            const h = d.homogeneous;
+            const fH = (v, ri) => ri < 3 ? fC(v) : v.toFixed(0);
+            switch(fmt) {
+                case 'python': return `np.array([\n${h.map((row,ri) => `  [${row.map(v=>fH(v,ri)).join(', ')}]`).join(',\n')}\n])`;
+                case 'json':   return JSON.stringify({T: h.map((row,ri) => row.map(v => ri<3 ? parseFloat(fC(v)) : v))});
+                case 'matlab': return h.map((row,ri) => row.map(v=>fH(v,ri)).join(', ')).join('; ');
+                default:       return 'Homogeneous Transform:\n' + h.map((row,ri) => row.map(v => fH(v,ri).padStart(14)).join('')).join('\n');
+            }
+        };
 
         switch(type) {
-            case 'euler':      text = fmtEuler();  break;
-            case 'quaternion': text = fmtQuat();   break;
-            case 'matrix':     text = fmtMatrix(); break;
-            case 'axis-angle': text = fmtAA();     break;
-            case 'rotvec':     text = fmtRV();     break;
+            case 'euler':        text = fmtEuler();  break;
+            case 'quaternion':   text = fmtQuat();   break;
+            case 'matrix':       text = fmtMatrix(); break;
+            case 'axis-angle':   text = fmtAA();     break;
+            case 'rotvec':       text = fmtRV();     break;
+            case 'homogeneous':  text = fmtHom();    break;
         }
         if (!text) return;
         try {
@@ -1777,6 +1874,7 @@
             `Axis-Angle (${d.units}): angle=${fC(d.axisAngle.angle)}  axis=[${d.axisAngle.axis.map(fC).join(', ')}]`,
         ];
         if (d.rotvec) lines.push(`Rotation Vector (rad): [${d.rotvec.map(fC).join(', ')}]`);
+        if (d.homogeneous) lines.push('Homogeneous Transform:\n' + d.homogeneous.map((row,ri) => row.map(v => (ri<3?fC(v):v.toFixed(0)).padStart(14)).join('')).join('\n'));
         try {
             await writeClipboard(lines.join('\n\n'));
             const btn = document.getElementById('copy-all-btn');
@@ -1850,6 +1948,8 @@
         document.getElementById('aa-z').value = '1';
         // Rotation Vector — zero vector
         ['rv-x', 'rv-y', 'rv-z'].forEach(id => document.getElementById(id).value = '0');
+        // Translation — zero
+        ['tx', 'ty', 'tz'].forEach(id => document.getElementById(id).value = '0');
         // Fire conversion to refresh results and viewer
         convert();
     });
