@@ -788,24 +788,7 @@
         /* ── Utility ────────────────────────────────────────────── */
         .hidden { display: none !important; }
 
-        /* Share button */
-        .share-btn {
-            margin-left: auto;
-            background: none;
-            border: 1px solid var(--border);
-            border-radius: 3px;
-            color: var(--text-lo);
-            font-family: var(--mono);
-            font-size: 9px;
-            letter-spacing: 0.1em;
-            padding: 3px 9px;
-            cursor: pointer;
-            transition: border-color var(--tr), color var(--tr);
-        }
-        .share-btn:hover { border-color: var(--accent); color: var(--accent); }
-        .share-btn.copied { border-color: var(--green); color: var(--green); }
-
-        /* ── Responsive ─────────────────────────────────────────── */
+/* ── Responsive ─────────────────────────────────────────── */
         @media (max-width: 600px) {
             .app {
                 grid-template-columns: 1fr;
@@ -824,7 +807,6 @@
 <header class="app-header">
     <h1><span class="bracket">&lt;</span>rotations<span class="bracket">&gt;</span></h1>
     <span class="subtitle">3D Converter</span>
-    <button class="share-btn" id="share-btn" title="Copy shareable link">share</button>
 </header>
 
 <!-- ── Fixed Footer ────────────────────────────────────────────── -->
@@ -1450,42 +1432,7 @@
     let debounceTimer = null;
 
     // ── URL State ─────────────────────────────────────────────────
-    function encodeState() {
-        const fmt = document.getElementById('format').value;
-        const state = {
-            f:  fmt,
-            v:  getValues(),
-            t:  getTranslation(),
-            iu: document.getElementById('input-units-toggle').checked ? 1 : 0,
-            ou: document.getElementById('output-units-toggle').checked ? 1 : 0,
-            io: document.getElementById('input-rotation-order').value,
-            ix: 1,
-        };
-        return btoa(JSON.stringify(state));
-    }
-
-    function decodeState(hash) {
-        try {
-            const state = JSON.parse(atob(hash.replace(/^#/, '')));
-            if (!state.f) return false;
-            document.getElementById('format').value = state.f;
-            onFormatChange();
-            const setV = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
-            if      (state.f === 'euler')      { [0,1,2].forEach(i => setV('euler-'+i, state.v[i])); }
-            else if (state.f === 'quaternion') { ['quat-w','quat-x','quat-y','quat-z'].forEach((id,i) => setV(id, state.v[i])); }
-            else if (state.f === 'matrix')     { document.querySelectorAll('#matrix-inputs .num-input').forEach((el,i) => el.value = state.v[i]); }
-            else if (state.f === 'axis-angle') { ['aa-angle','aa-x','aa-y','aa-z'].forEach((id,i) => setV(id, state.v[i])); }
-            else if (state.f === 'rotvec')     { ['rv-x','rv-y','rv-z'].forEach((id,i) => setV(id, state.v[i])); }
-            if (state.t) { ['tx','ty','tz'].forEach((id,i) => setV(id, state.t[i])); }
-            document.getElementById('input-units-toggle').checked  = !!state.iu;
-            document.getElementById('output-units-toggle').checked = !!state.ou;
-            document.getElementById('input-rotation-order').value  = state.io || 'zyx';
-            syncEulerLabels();
-            return true;
-        } catch (e) { return false; }
-    }
-
-    // ── Format switching ─────────────────────────────────────────
+// ── Format switching ─────────────────────────────────────────
     const ALL_INPUT_GROUPS = ['euler-inputs', 'quaternion-inputs', 'matrix-inputs', 'axis-angle-inputs', 'rotvec-inputs'];
 
     function onFormatChange() {
@@ -1906,17 +1853,6 @@
         if (document.getElementById('format').value === 'rotvec') syncRvHint();
     });
 
-    // ── Share button ──────────────────────────────────────────────
-    document.getElementById('share-btn').addEventListener('click', async () => {
-        const url = window.location.origin + window.location.pathname + '#' + encodeState();
-        try {
-            await writeClipboard(url);
-            const btn = document.getElementById('share-btn');
-            btn.textContent = 'copied!'; btn.classList.add('copied');
-            setTimeout(() => { btn.textContent = 'share'; btn.classList.remove('copied'); }, 2000);
-        } catch (_) {}
-    });
-
     // ── Reset ─────────────────────────────────────────────────────
     document.getElementById('quat-normalize-btn').addEventListener('click', () => {
         const ids = ['quat-w', 'quat-x', 'quat-y', 'quat-z'];
@@ -1957,8 +1893,7 @@
     // ── Init ──────────────────────────────────────────────────────
     onFormatChange();
     syncEulerLabels();
-    if (window.location.hash) decodeState(window.location.hash);
-    convert(); // populate results on load
+convert(); // populate results on load
 </script>
 </body>
 </html>
