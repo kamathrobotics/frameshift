@@ -1,68 +1,56 @@
-# 3D Rotation Converter
+# Rotations
 
-A simple web application to convert between different 3D rotation formats (Euler angles, quaternions, rotation matrices, and axis-angle representations) with real-time 3D visualization.
+A browser-based 3D rotation converter with real-time visualization. Convert between rotation formats used in robotics, computer graphics, and aerospace — all client-side, no backend.
+
+**Live at [rotations.kamathrobotics.com](https://rotations.kamathrobotics.com)**
 
 ## Features
 
-- Convert between:
-  - Euler angles (XYZ)
-  - Quaternions
-  - Rotation matrices
-  - Axis-angle representation
-- Real-time 3D visualization using Three.js
-- Interactive 3D viewer with orbit controls
-
-## Local Development
-
-1. Create a virtual environment (optional but recommended):
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
-
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. Run the application:
-   ```bash
-   python app.py
-   ```
-
-4. Open your browser and navigate to `http://localhost:5000`
+- Convert between 5 rotation formats:
+  - **Euler angles** — configurable rotation order (XYZ, ZYX, etc.), degrees or radians
+  - **Quaternion** — WXYZ convention, with live norm indicator
+  - **Rotation matrix** — 3×3, copy-friendly
+  - **Axis-angle** — axis vector + angle
+  - **Rotation vector** — compact 3-element representation
+- Real-time 3D visualization with Three.js (orbit, pan, zoom)
+- Live conversion as you type
+- Optional translation offset for the 3D view
+- Copy-to-clipboard for all output formats
 
 ## Usage
 
-1. Select the input rotation format from the dropdown
-2. Enter the rotation values in the corresponding input fields
-3. Click "Convert" to see the rotation represented in all formats
-4. The 3D viewer will update to show the rotation
-5. Use your mouse to orbit around the 3D view:
-   - Left click + drag to rotate the view
-   - Right click + drag to pan
-   - Scroll to zoom
+Select an input format, enter values, and all other representations update instantly. The 3D viewer shows the rotation applied to a coordinate frame.
 
-## Technologies Used
+- Left-click + drag to orbit
+- Right-click + drag to pan
+- Scroll to zoom
 
-- Backend:
-  - Python
-  - Flask
-  - NumPy
-  - SciPy
-- Frontend:
-  - Three.js for 3D visualization
-  - Vanilla JavaScript
-  - HTML/CSS
+## Local Development
 
-## Contributing
+```sh
+npm install
+npm run dev
+```
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+Opens at `http://localhost:8787`.
+
+## Project Structure
+
+```
+public/
+  index.html                 ← Single-file app (HTML + CSS + JS)
+  kamath_robotics_favicon.svg
+  kamath_robotics_logo_dark.svg
+src/
+  worker.js                  ← Cloudflare Worker (404 fallback)
+wrangler.jsonc               ← Cloudflare Pages config
+package.json                 ← Dev scripts (wrangler dev/deploy)
+```
+
+## Deployment
+
+Deployed on [Cloudflare Pages](https://pages.cloudflare.com/). Static files served from `public/`, no build step.
 
 ## License
 
-MIT License - feel free to use this code for any purpose.
+Apache-2.0
