@@ -1276,16 +1276,53 @@
         renderer.setSize(width, height);
         viewer.appendChild(renderer.domElement);
 
-        // Grid in X-Y plane (Z-up)
-        const gridMajor = new THREE.GridHelper(12, 6, 0x0e2d45, 0x0e2d45);
-        gridMajor.rotation.x = Math.PI / 2;
-        gridMajor.material.transparent = true; gridMajor.material.opacity = 1.0;
-        scene.add(gridMajor);
+        // Shader grid in X-Y plane (Z-up) — matches playground style
+        const gridMaterial = new THREE.ShaderMaterial({
+            side: THREE.DoubleSide,
+            uniforms: {
+                uScale:     { value: 0.1 },
+                uDivisions: { value: 10 },
+                uColor:     { value: new THREE.Color(0x0a4a5e) },
+                uDistance:  { value: 100 },
+            },
+            transparent: true,
+            vertexShader: `
+                varying vec3 worldPosition;
+                void main() {
+                    vec4 worldPos = modelMatrix * vec4(position, 1.0);
+                    worldPosition = worldPos.xyz;
+                    gl_Position   = projectionMatrix * viewMatrix * worldPos;
+                }
+            `,
+            fragmentShader: `
+                varying vec3 worldPosition;
+                uniform float uScale;
+                uniform float uDivisions;
+                uniform vec3  uColor;
+                uniform float uDistance;
 
-        const gridMinor = new THREE.GridHelper(12, 24, 0x091a28, 0x091a28);
-        gridMinor.rotation.x = Math.PI / 2;
-        gridMinor.material.transparent = true; gridMinor.material.opacity = 0.8;
-        scene.add(gridMinor);
+                float getGrid(float size) {
+                    vec2 coord = worldPosition.xy / size;
+                    vec2 grid  = abs(fract(coord - 0.5) - 0.5) / fwidth(coord);
+                    float line = min(grid.x, grid.y);
+                    return 1.0 - min(line, 1.0);
+                }
+
+                void main() {
+                    float d    = distance(cameraPosition, worldPosition);
+                    float g1   = getGrid(uScale);
+                    float g2   = getGrid(uScale * uDivisions);
+                    float grid = max(g1 * 0.3, g2 * 0.6);
+                    float fade = 1.0 - smoothstep(0.0, uDistance, d);
+                    grid *= fade;
+                    gl_FragColor = vec4(uColor, grid * 0.5);
+                    if (gl_FragColor.a < 0.01) discard;
+                }
+            `,
+        });
+        const gridMesh = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), gridMaterial);
+        gridMesh.position.z = 0;
+        scene.add(gridMesh);
 
         // World frame axes — dashed 2px shaft + cone, Z points up
         scene.add(createArrow([1,0,0], 0xff4444, 3.5, width, height, true, 0.32)); // X
