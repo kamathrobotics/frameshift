@@ -1263,7 +1263,6 @@
 
         scene = new THREE.Scene();
         scene.background = new THREE.Color(0x0d1117);
-        scene.fog = new THREE.FogExp2(0x0d1117, 0.035);
 
         // Z-up camera
         camera = new THREE.PerspectiveCamera(52, width / height, 0.1, 100);
@@ -1345,11 +1344,14 @@
         cube.add(createArrow([0,1,0], 0x44dd44, 1.6, width, height));
         cube.add(createArrow([0,0,1], 0x4488ff, 1.6, width, height));
 
-        // Lighting
-        scene.add(new THREE.AmbientLight(0x0a1525, 4));
-        const dl = new THREE.DirectionalLight(0x00b8d9, 0.5);
-        dl.position.set(5, -5, 8);
+        // Lighting — matches playground (white ambient + two directionals)
+        scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+        const dl = new THREE.DirectionalLight(0xffffff, 1.0);
+        dl.position.set(2, 2, 8);
         scene.add(dl);
+        const dl2 = new THREE.DirectionalLight(0xffffff, 0.3);
+        dl2.position.set(-1, -1, 3);
+        scene.add(dl2);
 
         // OrbitControls — Z-up
         controls = new OrbitControls(camera, renderer.domElement);
