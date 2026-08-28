@@ -1,8 +1,8 @@
-# Rotations
+# Frame Shift
 
 A browser-based 3D rotation converter with real-time visualization. Convert between rotation formats used in robotics, computer graphics, and aerospace — all client-side, no backend.
 
-**Live at [rotations.kamathrobotics.com](https://rotations.kamathrobotics.com)**
+**Live at [frameshift.kamathrobotics.com](https://frameshift.kamathrobotics.com)**
 
 ## Features
 
