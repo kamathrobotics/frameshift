@@ -1456,7 +1456,7 @@
 
     // Grid toggle
     document.getElementById('viewer-grid-btn').addEventListener('click', () => {
-        const next = !gridMesh.visible;
+        const next = !gridMeshes[0].visible;
         gridMeshes.forEach(m => m.visible = next);
         document.getElementById('viewer-grid-btn').classList.toggle('active', next);
     });
