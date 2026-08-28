@@ -7,26 +7,34 @@
     <link rel="icon" type="image/svg+xml" href="/kamath_robotics_favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
     <style>
         /* ── Variables ─────────────────────────────────────────── */
         :root {
-            --bg:           #0d1117;
-            --panel:        rgba(13, 17, 23, 0.75);
-            --surface:      rgba(255, 255, 255, 0.05);
-            --surface-hi:   rgba(255, 255, 255, 0.08);
-            --border:       rgba(255, 255, 255, 0.08);
-            --border-hi:    rgba(255, 255, 255, 0.15);
-            --accent:       #00b8d9;
-            --accent-dim:   rgba(0,184,217,0.18);
-            --accent-glow:  rgba(0,184,217,0.35);
+            /* ── Brand tokens ──────────────────────────────────────── */
+            --kr-orange:    #EC5800;
+            --kr-ink:       #0a0a0a;
+            --kr-steel:     #6FA6C4;
+            --kr-grey-400:  #A8A29E;
+            --font-display: 'Rajdhani', 'Barlow Condensed', 'Arial Narrow', sans-serif;
+
+            /* ── Palette ───────────────────────────────────────────── */
+            --bg:           #0a0a0a;
+            --panel:        rgba(10, 10, 10, 0.85);
+            --surface:      rgba(241, 239, 237, 0.05);
+            --surface-hi:   rgba(241, 239, 237, 0.08);
+            --border:       rgba(241, 239, 237, 0.08);
+            --border-hi:    rgba(241, 239, 237, 0.15);
+            --accent:       #6FA6C4;
+            --accent-dim:   rgba(111, 166, 196, 0.18);
+            --accent-glow:  rgba(111, 166, 196, 0.35);
             --green:        #00e87a;
             --green-dim:    rgba(0,232,122,0.1);
             --red:          #ff4060;
             --red-dim:      rgba(255,64,96,0.12);
-            --text:         rgba(255, 255, 255, 0.55);
-            --text-hi:      rgba(255, 255, 255, 0.85);
-            --text-lo:      rgba(255, 255, 255, 0.28);
+            --text:         rgba(241, 239, 237, 0.60);
+            --text-hi:      #F1EFED;
+            --text-lo:      rgba(241, 239, 237, 0.30);
             --ax:           #ff4444;
             --ay:           #44dd44;
             --az:           #4488ff;
@@ -60,17 +68,12 @@
         }
 
         .app-header h1 {
-            font-family: 'JetBrains Mono', monospace;
+            font-family: var(--font-display);
             font-weight: 700;
-            font-size: 16px;
-            color: #ffffff;
-            letter-spacing: 0.02em;
+            font-size: 20px;
+            color: var(--text-hi);
+            letter-spacing: 0.01em;
             line-height: 1;
-        }
-
-        .app-header h1 .bracket {
-            color: var(--accent);
-            -webkit-text-stroke: 0.5px rgba(255,255,255,0.4);
         }
 
         .app-header .subtitle {
@@ -93,11 +96,11 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            padding: 0 12px;
+            padding: 0 12px 0 0;
         }
 
         .app-footer .logo-link img {
-            height: 25px;
+            height: 38px;
             width: auto;
             display: block;
             opacity: 1;
@@ -128,7 +131,7 @@
 
         /* ── Panel ─────────────────────────────────────────────── */
         .panel {
-            background: rgba(13, 17, 23, 0.65);
+            background: rgba(10, 10, 10, 0.65);
             backdrop-filter: blur(14px) saturate(160%);
             -webkit-backdrop-filter: blur(14px) saturate(160%);
             border-right: 1px solid rgba(255, 255, 255, 0.08);
@@ -159,7 +162,7 @@
             text-transform: uppercase;
             color: rgba(255, 255, 255, 0.45);
             margin-bottom: 12px;
-            border-left: 2px solid rgba(0, 184, 217, 0.40);
+            border-left: 2px solid rgba(111, 166, 196, 0.40);
             padding-left: 8px;
         }
 
@@ -216,18 +219,18 @@
             width: 100%;
             cursor: pointer;
             transition: border-color var(--tr);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2300b8d9'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236FA6C4'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 10px center;
         }
 
         .select:focus {
             outline: none;
-            border-color: rgba(0, 184, 217, 0.50);
+            border-color: rgba(111, 166, 196, 0.50);
             box-shadow: 0 0 0 2px var(--accent-dim);
         }
 
-        .select option { background: #0d1117; }
+        .select option { background: #0a0a0a; }
 
         /* ── Number Input ───────────────────────────────────────── */
         .num-input {
@@ -244,7 +247,7 @@
 
         .num-input:focus {
             outline: none;
-            border-color: rgba(0, 184, 217, 0.50);
+            border-color: rgba(111, 166, 196, 0.50);
             box-shadow: 0 0 0 2px var(--accent-dim);
         }
 
@@ -373,7 +376,7 @@
             align-items: center;
             justify-content: center;
             background: none;
-            border: 1px solid rgba(0, 184, 217, 0.50);
+            border: 1px solid rgba(111, 166, 196, 0.50);
             border-radius: var(--radius);
             color: var(--accent);
             font-family: var(--mono);
@@ -669,7 +672,7 @@
             top: 14px;
             left: 16px;
             z-index: 3;
-            background: rgba(13, 17, 23, 0.65);
+            background: rgba(10, 10, 10, 0.65);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -686,9 +689,9 @@
         }
 
         .viewer-home-btn:hover {
-            border-color: rgba(0, 184, 217, 0.50);
+            border-color: rgba(111, 166, 196, 0.50);
             color: var(--accent);
-            background: rgba(0, 184, 217, 0.12);
+            background: rgba(111, 166, 196, 0.12);
         }
 
 
@@ -761,7 +764,7 @@
             background: none;
             border: 1px solid rgba(255, 255, 255, 0.10);
             border-radius: 0 3px 3px 0;
-            color: rgba(0, 184, 217, 0.60);
+            color: rgba(111, 166, 196, 0.60);
             font-family: var(--mono);
             font-size: 8px;
             padding: 2px 5px;
@@ -769,7 +772,7 @@
             transition: border-color var(--tr), color var(--tr);
         }
 
-        .copy-fmt-btn:hover, .copy-btn:hover { border-color: rgba(0, 184, 217, 0.50); color: var(--accent); }
+        .copy-fmt-btn:hover, .copy-btn:hover { border-color: rgba(111, 166, 196, 0.50); color: var(--accent); }
         .copy-btn.copied { border-color: var(--green); color: var(--green); }
 
         .copy-menu {
@@ -777,7 +780,7 @@
             position: absolute;
             right: 0;
             top: calc(100% + 2px);
-            background: rgba(13, 17, 23, 0.92);
+            background: rgba(10, 10, 10, 0.92);
             backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
             border: 1px solid rgba(255, 255, 255, 0.12);
@@ -840,7 +843,7 @@
 
 <!-- ── Fixed Header ────────────────────────────────────────────── -->
 <header class="app-header">
-    <h1><span class="bracket">&lt;</span>rotations<span class="bracket">&gt;</span></h1>
+    <h1>Rotations</h1>
     <span class="subtitle">3D Converter</span>
 </header>
 
@@ -1262,7 +1265,7 @@
         const { width, height } = viewer.getBoundingClientRect();
 
         scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x0d1117);
+        scene.background = new THREE.Color(0x0a0a0a);
 
         // Z-up camera
         camera = new THREE.PerspectiveCamera(52, width / height, 0.1, 100);
@@ -1337,7 +1340,7 @@
         scene.add(cube);
 
         // Fat wireframe edges (3 px)
-        cube.add(makeFatEdges(geo, 0x00b8d9, 2, width, height));
+        cube.add(makeFatEdges(geo, 0x6FA6C4, 2, width, height));
 
         // Body-fixed axes — rotate with cube
         cube.add(createArrow([1,0,0], 0xff4444, 1.6, width, height));
