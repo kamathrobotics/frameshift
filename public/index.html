@@ -666,12 +666,17 @@
         .legend-dot.y { background: #44dd44; }
         .legend-dot.z { background: #4488ff; }
 
-        /* Camera home button */
-        .viewer-home-btn {
+        /* Viewer controls group (top-left) */
+        .viewer-controls {
             position: absolute;
             top: 14px;
             left: 16px;
             z-index: 3;
+            display: flex;
+            gap: 6px;
+        }
+
+        .viewer-home-btn {
             background: rgba(10, 10, 10, 0.65);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
@@ -692,6 +697,12 @@
             border-color: rgba(111, 166, 196, 0.50);
             color: var(--accent);
             background: rgba(111, 166, 196, 0.12);
+        }
+
+        .viewer-home-btn.active {
+            border-color: rgba(111, 166, 196, 0.50);
+            color: var(--accent);
+            background: rgba(111, 166, 196, 0.10);
         }
 
 
@@ -1177,7 +1188,10 @@
     <div class="viewer-wrap">
         <div id="viewer"></div>
         <div class="viewer-overlay"></div>
-        <button class="viewer-home-btn" id="viewer-home-btn" title="Reset camera view">⌂</button>
+        <div class="viewer-controls">
+            <button class="viewer-home-btn" id="viewer-home-btn" title="Reset camera view">⌂</button>
+            <button class="viewer-home-btn active" id="viewer-grid-btn" title="Toggle grid">#</button>
+        </div>
         <div class="axis-legend">
             <div class="legend-item"><span class="legend-dot x"></span>X</div>
             <div class="legend-item"><span class="legend-dot y"></span>Y</div>
@@ -1284,7 +1298,7 @@
             uniforms: {
                 uScale:     { value: 0.1 },
                 uDivisions: { value: 10 },
-                uColor:     { value: new THREE.Color(0x0a4a5e) },
+                uColor:     { value: new THREE.Color(0x6FA6C4) },
                 uDistance:  { value: 100 },
             },
             transparent: true,
@@ -1393,6 +1407,12 @@
         camera.up.set(0, 0, 1);
         controls.target.set(0, 0, 0);
         controls.update();
+    });
+
+    // Grid toggle
+    document.getElementById('viewer-grid-btn').addEventListener('click', () => {
+        gridMesh.visible = !gridMesh.visible;
+        document.getElementById('viewer-grid-btn').classList.toggle('active', gridMesh.visible);
     });
 
 
