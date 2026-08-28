@@ -1253,7 +1253,7 @@
     import { LineGeometry }         from 'three/addons/lines/LineGeometry.js';
     import { LineMaterial }         from 'three/addons/lines/LineMaterial.js';
 
-    let scene, camera, renderer, cube, controls;
+    let scene, camera, renderer, cube, controls, gridMeshes;
     const fatMaterials = []; // updated on resize
 
     // 2px Line2 shaft + cone arrowhead
@@ -1382,7 +1382,7 @@
         const gridMeshYZ = new THREE.Mesh(new THREE.PlaneGeometry(100, 100), makeGridMaterial('yz'));
         gridMeshYZ.rotation.y = Math.PI / 2;
 
-        const gridMeshes = [gridMesh, gridMeshXZ, gridMeshYZ];
+        gridMeshes = [gridMesh, gridMeshXZ, gridMeshYZ];
         gridMeshes.forEach(m => scene.add(m));
 
         // World frame axes — dashed 2px shaft + cone, Z points up
