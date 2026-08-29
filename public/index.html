@@ -43,7 +43,6 @@
             --radius:       6px;
             --tr:           0.18s ease;
             --header-h:     49px;
-            --footer-h:     48px;
         }
 
         /* ── Reset ─────────────────────────────────────────────── */
@@ -83,32 +82,26 @@
             text-transform: uppercase;
         }
 
-        /* ── Fixed Footer ───────────────────────────────────────── */
+        /* ── Floating Logo ──────────────────────────────────────── */
         .app-footer {
             position: fixed;
-            bottom: 0; left: 0; right: 0;
-            height: var(--footer-h);
+            bottom: 14px;
+            right: 16px;
             z-index: 100;
-            background: var(--panel);
-            backdrop-filter: blur(14px) saturate(160%);
-            -webkit-backdrop-filter: blur(14px) saturate(160%);
-            border-top: 1px solid rgba(255, 255, 255, 0.07);
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding: 0 0 0 12px;
+            pointer-events: auto;
         }
 
         .app-footer .logo-link svg {
-            height: 38px;
+            height: 32px;
             width: auto;
             display: block;
-            transition: filter 0.2s;
+            opacity: 1;
+            transition: opacity 0.2s, filter 0.2s;
         }
 
         .app-footer .logo-link:hover svg {
-            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.5))
-                    drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+            opacity: 1;
+            filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.25));
         }
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
@@ -121,7 +114,7 @@
         .app {
             position: fixed;
             top: var(--header-h);
-            bottom: var(--footer-h);
+            bottom: 0;
             left: 0;
             right: 0;
             display: grid;
@@ -860,7 +853,8 @@
 <!-- ── Fixed Footer ────────────────────────────────────────────── -->
 <footer class="app-footer">
     <a href="https://kamathrobotics.com/" target="_blank" class="logo-link" aria-label="Kamath Robotics">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 125" role="img" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 125" width="500" height="125" role="img" aria-label="Kamath Robotics">
+          <title>Kamath Robotics</title>
           <g transform="translate(83.77 16.44) scale(1.151625) translate(-10 -10)">
               <g transform="rotate(0 50 50)"><rect x="40" y="12" width="20" height="7" rx="3.5" fill="#EE6C08"></rect></g>
               <g transform="rotate(45 50 50)"><rect x="40" y="12" width="20" height="7" rx="3.5" fill="#EC5800"></rect></g>
