@@ -53,13 +53,15 @@
         /* ── Fixed Header ───────────────────────────────────────── */
         .app-header {
             position: fixed;
-            top: 0; left: 0; right: 0;
+            top: 0; left: 0;
+            width: 360px;
             height: var(--header-h);
-            z-index: 100;
+            z-index: 110;
             background: var(--panel);
             backdrop-filter: blur(14px) saturate(160%);
             -webkit-backdrop-filter: blur(14px) saturate(160%);
             border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -118,7 +120,7 @@
         /* ── Layout ─────────────────────────────────────────────── */
         .app {
             position: fixed;
-            top: var(--header-h);
+            top: 0;
             bottom: 0;
             left: 0;
             right: 0;
@@ -144,10 +146,29 @@
 
         .panel-content {
             padding: 16px 20px;
+            padding-top: calc(var(--header-h) + 16px);
         }
 
         /* ── Section ────────────────────────────────────────────── */
         .section { margin-bottom: 20px; }
+
+        /* ── Inputs table (rotation | translation columns) ──────── */
+        .inputs-table {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .inputs-col-label {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-lo);
+            margin-bottom: 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid var(--border);
+        }
 
         .section-label {
             display: flex;
@@ -192,12 +213,14 @@
 
         .field-label.small { font-size: 9px; color: var(--text-lo); letter-spacing: 0.08em; margin-bottom: 6px; }
 
-        .toggle-field {
+        .toggle-field, .inline-field {
             display: flex;
             align-items: center;
+            gap: 8px;
         }
 
-        .toggle-field .field-label { margin-bottom: 0; flex: 1; }
+        .toggle-field .field-label, .inline-field .field-label { margin-bottom: 0; flex: 1; }
+        .field.inline-field .select { flex: 1; width: auto !important; }
 
         /* ── Select ─────────────────────────────────────────────── */
         .select {
@@ -906,7 +929,7 @@
             <div class="section">
                 <div class="section-label">Input</div>
 
-                <div class="field">
+                <div class="field inline-field">
                     <label class="field-label">Format</label>
                     <select id="format" class="select">
                         <option value="euler">Euler Angles</option>
@@ -917,7 +940,7 @@
                     </select>
                 </div>
 
-                <div id="euler-order-field" class="field">
+                <div id="euler-order-field" class="field inline-field">
                     <label class="field-label">Rotation Order</label>
                     <select id="input-rotation-order" class="select">
                         <option value="zyx" selected>ZYX</option>
@@ -942,6 +965,10 @@
                     </div>
                 </div>
 
+                <!-- Rotation | Translation 2-column table -->
+                <div class="inputs-table">
+                <div class="inputs-col">
+                    <div class="inputs-col-label">Rotation</div>
                 <!-- Euler Inputs -->
                 <div id="euler-inputs" class="inputs-group">
                     <div class="input-row">
@@ -1048,12 +1075,9 @@
                     </div>
                     <div class="norm-indicator" id="rv-hint">magnitude = angle in radians</div>
                 </div>
-            </div>
-
-            <!-- TRANSLATION SECTION -->
-            <div class="section">
-                <div class="section-label">Translation</div>
-                <div class="field">
+                </div><!-- end .inputs-col rotation -->
+                <div class="inputs-col">
+                    <div class="inputs-col-label">Translation</div>
                     <div class="input-row">
                         <span class="axis-label x">X</span>
                         <input type="number" step="any" class="num-input" id="tx" placeholder="0">
@@ -1066,7 +1090,8 @@
                         <span class="axis-label z">Z</span>
                         <input type="number" step="any" class="num-input" id="tz" placeholder="0">
                     </div>
-                </div>
+                </div><!-- end .inputs-col translation -->
+                </div><!-- end .inputs-table -->
             </div>
             <button class="reset-btn" id="reset-btn">reset</button>
 
