@@ -1,8 +1,8 @@
-# FrameShift
+# Versor
 
 A browser-based 3D rotation converter with real-time visualization. Convert between rotation formats used in robotics, computer graphics, and aerospace — all client-side, no backend.
 
-**Live at [frameshift.kamathrobotics.com](https://frameshift.kamathrobotics.com)**
+**Live at [versor.kamathrobotics.com](https://versor.kamathrobotics.com)**
 
 ## Features
 
