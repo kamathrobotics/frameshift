@@ -2,8 +2,6 @@
 
 A browser-based 3D rotation converter with real-time visualization. Convert between rotation formats used in robotics, computer graphics, and aerospace — all client-side, no backend.
 
-**Live at [versor.kamathrobotics.com](https://versor.kamathrobotics.com)**
-
 ## Features
 
 - Convert between 5 rotation formats:
