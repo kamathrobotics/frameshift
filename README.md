@@ -1,6 +1,8 @@
 # Versor
-![CI](https://github.com/kamathrobotics/versor/actions/workflows/ci.yml/badge.svg)
+[![CI](https://github.com/kamathrobotics/versor/actions/workflows/ci.yml/badge.svg)](https://github.com/kamathrobotics/versor/actions/workflows/ci.yml)
 ![Project Status](https://img.shields.io/badge/Status-Active-green)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES%20Modules-yellow?style=flat&logo=javascript&logoColor=white)
+![Three.js](https://img.shields.io/badge/Three.js-r162-black?style=flat&logo=threedotjs&logoColor=white)
 ![License](https://img.shields.io/github/license/kamathrobotics/versor?label=License)
 
 A browser-based 3D rotation converter with real-time visualization. Convert between rotation formats used in robotics, computer graphics, and aerospace — all client-side, no backend.
