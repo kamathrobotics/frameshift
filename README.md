@@ -45,10 +45,6 @@ wrangler.jsonc               ← Cloudflare Pages config
 package.json                 ← Dev scripts (wrangler dev/deploy)
 ```
 
-## Deployment
-
-Deployed on [Cloudflare Pages](https://pages.cloudflare.com/). Static files served from `public/`, no build step.
-
 ## License
 
 Apache-2.0
