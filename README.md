@@ -1,4 +1,6 @@
 # Versor
+![Project Status](https://img.shields.io/badge/Status-Active-green)
+![License](https://img.shields.io/github/license/kamathrobotics/versor?label=License)
 
 A browser-based 3D rotation converter with real-time visualization. Convert between rotation formats used in robotics, computer graphics, and aerospace — all client-side, no backend.
 
