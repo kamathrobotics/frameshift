@@ -1,4 +1,5 @@
 # Versor
+![CI](https://github.com/kamathrobotics/versor/actions/workflows/ci.yml/badge.svg)
 ![Project Status](https://img.shields.io/badge/Status-Active-green)
 ![License](https://img.shields.io/github/license/kamathrobotics/versor?label=License)
 
