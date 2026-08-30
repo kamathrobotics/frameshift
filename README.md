@@ -1,4 +1,4 @@
-# Versor 
+# Versor
 [![CI](https://github.com/kamathrobotics/versor/actions/workflows/ci.yml/badge.svg)](https://github.com/kamathrobotics/versor/actions/workflows/ci.yml)
 ![Project Status](https://img.shields.io/badge/Status-Active-green)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES%20Modules-yellow?style=flat&logo=javascript&logoColor=white)
